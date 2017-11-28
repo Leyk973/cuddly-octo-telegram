@@ -7,6 +7,8 @@ var echelon=document.getElementById("echelon");
 var possible=false;
 var n=0;
 var m;
+var profildemescouilles=[];
+var lignetemporaire=[];
 //génère les cases de la matrice 
 
 ok.onclick=function(){
@@ -45,15 +47,33 @@ echelon.onclick=function(){
         }
     }
 
-    var col=k;
+
     console.log(m);
     
-    while(possible && col <=ordre.value){
+    while(possible && k <ordre.value){
+        //RECHERCHE
         var lig=l;
         var notfound=true;
-        for (j=1;j<=n;i++){
-            
+        while (notfound && lig<ordre.value){
+            if (m[lig][k]!=0){
+                profildemescouilles.push(lig);
+                notfound=!notfound;
+            }
+            lig++;
         }
+        
+
+        if (!nontrouve){
+            if (profildemescouilles[0]!=l){
+                for (i=0;i<ordre.value;i++){
+                    lignetemporaire[i]=m[profildemescouilles[0]][i];
+                    m[profildemescouilles[0]][i]=m[l][i];
+                    m[l][i]=lignetemporaire[i];
+                }
+            }
+        }
+        
+        
     }
 }
 
