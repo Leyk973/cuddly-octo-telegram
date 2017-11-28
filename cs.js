@@ -34,21 +34,27 @@ ok.onclick=function(){
     
 }
 
-var l=1,k=1;
+
+var l=0,k=0;
 
 echelon.onclick=function(){
     for (i=0;i<n;i++){
         for (j=0;j<n;j++){
             m[i][j]=document.getElementById(i+","+j).value;
-            console.log(document.getElementById(i+","+j).value);
 
         }
     }
+
+    var col=k;
     console.log(m);
-    /*
-    while(possible){
+    
+    while(possible && col <=ordre.value){
+        var lig=l;
+        var notfound=true;
         for (j=1;j<=n;i++){
             
         }
-    }*/
+    }
 }
+
+
