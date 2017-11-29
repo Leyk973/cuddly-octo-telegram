@@ -1,20 +1,30 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8"/>
-        <link rel='stylesheet' type="text/css" href="cs.css"/>
-    </head>
-    <body>
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel='stylesheet' type="text/css" href="cs.css" />
+    <title>Résolution de systèmes matriciels</title>
+</head>
+
+<body>
+    <header>
+        <h1>Résolution de systèmes matriciels</h1>
+    </header>
+
+
         <label>Ordre de la matrice: </label>
-        <input id="ordre" type="number"/>
-        <input id="okbutton" type="button" value="OK"/>
+        <input id="ordre" type="number" max="20" min="0" />
+        <input id="okbutton" type="button" value="OK" class="bouton" />
+        <input type="button" id="random" value="Générer des valeurs aléatoires" class="bouton" disabled/>
 
         <table id="matrice">
 
         </table>
 
-        <input type="button" value="Échelonner" id="echelon"/>
-        
-        <script src="cs.js"></script>
-    </body>
+        <input type="button" value="Échelonner" id="echelon" />
+
+    <script src="cs.js"></script>
+</body>
+
 </html>
