@@ -2,7 +2,6 @@
 var ordre=document.getElementById("ordre");
 var ok=document.getElementById("okbutton");
 var matrice=document.getElementById("matrice");
-var matriceb=document.getElementById("b");
 var string="";
 var str2="";
 var echelon=document.getElementById("echelon");
@@ -16,7 +15,29 @@ var random=document.getElementById("random");
 var inputs=document.getElementsByClassName("mat");
 var resoudre=document.getElementById("resoudre");
 var x;//la solution sous forme de tableau
+var radios=document.getElementsByName("methode");
+var methode="gauss";
 
+
+for (i=0;i<radios.length;i++){
+    radios[i].onclick=function(event){
+        changeMethod(event);
+    }
+}
+
+
+function changeMethod(event){
+    methode=event.target.value;
+    switch(methode){
+        case "gauss":
+            echelon.value="Échelonner";
+        break;
+        case "lu":case "cholesky":
+            echelon.value="Factoriser";
+        break;
+        
+    }
+}
 
 
 //génère les cases de la matrice 
@@ -31,8 +52,10 @@ ok.onclick=function(){
         }
         b=new Array(ordre.value);
         x=new Array(ordre.value);
-        string="";
+        string="<tr><th colspan=3>A</th><th>b</th></tr>";
         n=ordre.value;
+       
+        
         for (i=0;i<ordre.value;i++){
             string+="<tr>";
             for (j=0;j<ordre.value;j++){
@@ -43,7 +66,7 @@ ok.onclick=function(){
 
         }
         matrice.innerHTML=string;
-        matriceb.innerHTML=str2;
+
         possible=true;
 
         //Quand on laisse une case vide, la valeur 0 lui est attribuée -> c'est simplement pour éviter d'avoir à gérer les cas où on clique sur échelonner alors que des valeurs ne sont pas renseignées
@@ -62,68 +85,82 @@ ok.onclick=function(){
 var l=0,k=0;
 
 echelon.onclick=function(){
-    l=0;
-    k=0;
-    for (i=0;i<n;i++){
-        for (j=0;j<n;j++){
-            m[i][j]=document.getElementById(i+","+j).value;
-        }
-        b[i]=document.getElementById("b"+i).value;
-    }
-    
-
-    
-    
-    while(l<ordre.value && k <ordre.value){
-        profildemescouilles=[];
-        var lig=l;
-        var notfound=true;
-        while (notfound && lig<ordre.value){
-            if (m[lig][k]!=0){
-                profildemescouilles.push(lig);
-                notfound=false;
+    switch(methode){
+        case "gauss":
+        l=0;
+        k=0;
+        for (i=0;i<n;i++){
+            for (j=0;j<n;j++){
+                m[i][j]=document.getElementById(i+","+j).value;
             }
-            lig++;
+            b[i]=document.getElementById("b"+i).value;
         }
         
     
-        if (!notfound){
-            if (profildemescouilles[0]!=l){
-                for (i=0;i<ordre.value;i++){
-                    lignetemporaire[i]=m[profildemescouilles[0]][i];
-                    m[profildemescouilles[0]][i]=m[l][i];
-                    m[l][i]=lignetemporaire[i];
+        
+        
+        while(l<ordre.value && k <ordre.value){
+            profildemescouilles=[];
+            var lig=l;
+            var notfound=true;
+            while (notfound && lig<ordre.value){
+                if (m[lig][k]!=0){
+                    profildemescouilles.push(lig);
+                    notfound=false;
                 }
+                lig++;
             }
-                
-                
-            for (i=l+1;i<n;i++){
-                var facteur=m[i][k]/m[l][k];
-                for (j=k;j<n;j++){
-                    m[i][j]-=facteur*m[l][j];
+            
+        
+            if (!notfound){
+                if (profildemescouilles[0]!=l){
+                    for (i=0;i<ordre.value;i++){
+                        lignetemporaire[i]=m[profildemescouilles[0]][i];
+                        m[profildemescouilles[0]][i]=m[l][i];
+                        m[l][i]=lignetemporaire[i];
+                    }
                 }
-                b[i]-=facteur*b[l];
+                    
+                    
+                for (i=l+1;i<n;i++){
+                    var facteur=m[i][k]/m[l][k];
+                    for (j=k;j<n;j++){
+                        m[i][j]-=facteur*m[l][j];
+                    }
+                    b[i]-=facteur*b[l];
+                }
+    
+                l++;
+                
+               
             }
-
-            l++;
+            k++;
+    
             
            
+            
+            
         }
-        k++;
+        for (i=0;i<m.length;i++){
+            for (j=0;j<m.length;j++){
+                document.getElementById(i+","+j).value=m[i][j];
+            }
+        }
+        for (i=0;i<b.length;i++){
+            document.getElementById("b"+i).value=b[i];
+        }
 
-        
-       
-        
-        
+        break;
+
+        case "lu":
+
+        break;
+
     }
-    for (i=0;i<m.length;i++){
-        for (j=0;j<m.length;j++){
-            document.getElementById(i+","+j).value=m[i][j];
-        }
-    }
-    for (i=0;i<b.length;i++){
-        document.getElementById("b"+i).value=b[i];
-    }
+    
+
+
+
     resoudre.disabled=false;
     
 }

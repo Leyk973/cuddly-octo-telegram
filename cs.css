@@ -14,10 +14,10 @@
     font-size:18px;
 }
 
-body{
+#main{
     margin-left:auto;
     margin-right:auto;
-    width:500px;
+    width:700px;
     font-size:20px;
 }
 
@@ -43,3 +43,16 @@ header{
     border:1px solid rgb(228, 228, 228);
     font-size:18px;
 }
+
+#matrice{
+    margin:10px;
+}
+
+#x{
+    margin:10px;
+}
+
+#mode{
+    font-size:20px;     
+}
+

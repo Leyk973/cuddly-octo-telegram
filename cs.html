@@ -7,12 +7,18 @@
     <title>Résolution de systèmes matriciels</title>
 </head>
 
-<body>
+<body><div id="main">
     <header>
         <h1>Résolution de systèmes matriciels</h1>
     </header>
-
-
+    
+        <input type="radio" id="gauss" name="methode" value="gauss" checked/>
+        <label for="gauss">Élimination de Gauss</label>
+        <input type="radio" id="lu" name="methode" value="lu"/>
+        <label for="lu">Factorisation LU</label>
+        <input type="radio" id="cholesky" name="methode" value="cholesky"/>
+        <label for="cholesky">Factorisation de Cholesky</label>
+        <br>
         <label>Ordre de la matrice: </label>
         <input id="ordre" type="number" max="20" min="0" />
         <input id="okbutton" type="button" value="OK" class="bouton" />
@@ -21,9 +27,8 @@
         <table id="matrice">
 
         </table>
-        <table id="b">
 
-        </table>
+
 
         <input type="button" value="Échelonner" id="echelon" disabled/>
         <input type="button" value="Résoudre" id="resoudre" disabled/>
@@ -31,7 +36,7 @@
         <table id="x">
             
         </table>
-
+</div>
     <script src="cs.js"></script>
 </body>
 
