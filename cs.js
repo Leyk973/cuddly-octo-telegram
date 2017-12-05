@@ -7,9 +7,11 @@ var str2="";
 var echelon=document.getElementById("echelon");
 var possible=false;
 var n=0;
-var m;
-var b;
 var profil=[];
+var m; // matrice A
+var b; // matrice b
+var lower; // matrice L
+var upper; // matrice U
 var lignetemporaire=[];
 var random=document.getElementById("random");
 var inputs=document.getElementsByClassName("mat");
@@ -17,6 +19,10 @@ var resoudre=document.getElementById("resoudre");
 var x;//la solution sous forme de tableau
 var radios=document.getElementsByName("methode");
 var methode="gauss";
+
+
+
+
 
 
 for (i=0;i<radios.length;i++){
@@ -232,4 +238,37 @@ function solution(num){
         x[num]/=m[num][num];
         return x[num];
     }
+}
+
+// a lancer ssi echelonnée
+function transfoLU(){
+    // variables locales
+    var p; // pivot
+    var q; // qivot
+
+    // Initialisation
+    // U = A
+    upper = m;
+
+    // L = I
+    for (i = 0; i < n; ++i){
+        for (j = 0; j < n; ++j){
+            if (j != i){
+                lower[i][j]=0;
+            } else {
+                lower[i][j]=1;
+            }
+        }
+    }
+
+    // Construction de L et U
+    for (k = 0; k < n; ++k){
+        p = upper[k][k];
+        for (i = k+1; i < n; ++i){
+            q = upper[i][k];
+            upper[i][k] = 0;
+            lower[i][k] = q/p;
+        }
+    }
+
 }
