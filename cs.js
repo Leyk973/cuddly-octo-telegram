@@ -7,11 +7,11 @@ var str2="";
 var echelon=document.getElementById("echelon");
 var possible=false;
 var n=0;
+var profil=[];
 var m; // matrice A
 var b; // matrice b
 var lower; // matrice L
 var upper; // matrice U
-var profildemescouilles=[];
 var lignetemporaire=[];
 var random=document.getElementById("random");
 var inputs=document.getElementsByClassName("mat");
@@ -58,8 +58,9 @@ ok.onclick=function(){
         }
         b=new Array(ordre.value);
         x=new Array(ordre.value);
-        string="<tr><th colspan=3>A</th><th>b</th></tr>";
         n=ordre.value;
+        string="<tr><th colspan="+n+">A</th><th>b</th></tr>";
+        
        
         
         for (i=0;i<ordre.value;i++){
@@ -106,12 +107,12 @@ echelon.onclick=function(){
         
         
         while(l<ordre.value && k <ordre.value){
-            profildemescouilles=[];
+            profil=[];
             var lig=l;
             var notfound=true;
             while (notfound && lig<ordre.value){
                 if (m[lig][k]!=0){
-                    profildemescouilles.push(lig);
+                    profil.push(lig);
                     notfound=false;
                 }
                 lig++;
@@ -119,10 +120,10 @@ echelon.onclick=function(){
             
         
             if (!notfound){
-                if (profildemescouilles[0]!=l){
+                if (profil[0]!=l){
                     for (i=0;i<ordre.value;i++){
-                        lignetemporaire[i]=m[profildemescouilles[0]][i];
-                        m[profildemescouilles[0]][i]=m[l][i];
+                        lignetemporaire[i]=m[profil[0]][i];
+                        m[profil[0]][i]=m[l][i];
                         m[l][i]=lignetemporaire[i];
                     }
                 }
@@ -159,8 +160,27 @@ echelon.onclick=function(){
         break;
 
         case "lu":
+            var str="";
+            for (i=0;i<n;i++){
+                str+="<tr>";
+                for (j=0;j<n;j++){
+                    str+="<td><label id='l"+i+","+j+"'>ah</label></td>";
+                    
+                }
+                str+="</tr>";
+            }
 
+            str="";
+            for (i=0;i<n;i++){
+                str+="<tr>";
+                for (j=0;j<n;j++){
+                    str+="<td><label id='l"+i+","+j+"'>ah</label></td>";
+                    
+                }
+                str+="</tr>";
+            }
         break;
+    
 
     }
     
@@ -187,7 +207,6 @@ random.onclick=function(){
 
 resoudre.onclick=function(){
     solution(0);
-    console.log(x);
     var s="";
     for (i=0;i<x.length;i++){
         s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
@@ -207,7 +226,6 @@ function solution(num){
         x[num]/=m[num][num];
         return x[num];
     }
-    
 }
 
 // a lancer ssi echelonnée
