@@ -229,6 +229,7 @@ function solution(num){
 }
 
 // a lancer ssi echelonnée
+// décompose la matrice matP en lower et upper
 function transfoLU(){
     // variables locales
     var p; // pivot
@@ -256,7 +257,60 @@ function transfoLU(){
             q = upper[i][k];
             upper[i][k] = 0;
             lower[i][k] = q/p;
+            for (j = k+1; j < n; ++j){
+                upper[i][j] = upper[i][j] - ( ( q/p ) * upper[k][j]);
+            }
+        }
+    }
+}
+
+// retourne vrai si la matrice en paramètre est symétrique, faux sinon
+// param : matQ : matrice carrée
+function isSymetric(matC){
+    var sym = true;
+
+    for (i = 0; i < n; ++i){
+        for (j = 0; j < i; ++j){
+            if(matC[i][j] != matC[j][i]){
+                sym = false;
+            }
         }
     }
 
+    return sym;
+}
+
+
+// retourne le déterminant d'une matrice à partir de la U de sa décomposition LU
+// va être utile pour verifier si definie positive
+// param : matP : une matrice carree
+function calcDetByLU(matP){
+    // variables locales
+    var p; // pivot
+    var q; // qivot
+    var u; // matrice U
+    var det = 1; // retour de la fonction, le determinant de matP
+
+    // Initialisation
+    // U = A
+    u = matP;
+
+    // Construction de L et U
+    for (k = 0; k < n; ++k){
+        p = u[k][k];
+        for (i = k+1; i < n; ++i){
+            q = u[i][k];
+            u[i][k] = 0;
+            for (j = k+1; j < n; ++j){
+                u[i][j] = u[i][j] - ( ( q/p ) * u[k][j]);
+            }
+        }
+    }
+
+    // Calcul du déterminant
+    for (i = 0 ; i < n; ++i){
+        det *= u[i][i];
+    }
+
+    return det;
 }
