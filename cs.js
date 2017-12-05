@@ -69,7 +69,7 @@ ok.onclick=function(){
                 string+="<td><input type='number' id='"+i+","+j+"' value='0' class=mat onclick=this.select(); /></td>";
                 
             }
-            string+="<td><input type=number id='b"+i+"' value='0' class=matb /></td></tr>";
+            string+="<td><input type=number id='b"+i+"' value='0' class=matb onclick=this.select(); /></td></tr>";
 
         }
         matrice.innerHTML=string;
@@ -92,16 +92,17 @@ ok.onclick=function(){
 var l=0,k=0;
 
 echelon.onclick=function(){
+    for (i=0;i<n;i++){
+        for (j=0;j<n;j++){
+            m[i][j]=document.getElementById(i+","+j).value;
+        }
+        b[i]=document.getElementById("b"+i).value;
+    }
     switch(methode){
         case "gauss":
         l=0;
         k=0;
-        for (i=0;i<n;i++){
-            for (j=0;j<n;j++){
-                m[i][j]=document.getElementById(i+","+j).value;
-            }
-            b[i]=document.getElementById("b"+i).value;
-        }
+        
         
     
         
@@ -142,12 +143,8 @@ echelon.onclick=function(){
                
             }
             k++;
-    
-            
-           
-            
-            
         }
+
         for (i=0;i<m.length;i++){
             for (j=0;j<m.length;j++){
                 document.getElementById(i+","+j).value=m[i][j];
@@ -164,28 +161,43 @@ echelon.onclick=function(){
             for (i=0;i<n;i++){
                 str+="<tr>";
                 for (j=0;j<n;j++){
-                    str+="<td><label id='l"+i+","+j+"'>ah</label></td>";
+                    str+="<td><label id='l"+i+","+j+"'>l?</label></td>";
                     
                 }
                 str+="</tr>";
             }
+
+
+            document.getElementById("matl").innerHTML=str;
 
             str="";
             for (i=0;i<n;i++){
                 str+="<tr>";
                 for (j=0;j<n;j++){
-                    str+="<td><label id='l"+i+","+j+"'>ah</label></td>";
+                    str+="<td><label id='u"+i+","+j+"'>u?</label></td>";
                     
                 }
                 str+="</tr>";
             }
+            document.getElementById("matu").innerHTML=str;
         break;
+        
     
 
     }
     
 
-
+    var str="";
+    for (i=0;i<n;i++){
+        str+="<tr>";
+        for (j=0;j<n;j++){
+            str+="<td><label id='a"+i+","+j+"'>"+String(m[i][j]).substr(0,6)+"</label></td>";
+            
+        }
+        str+="</tr>";
+    }
+    console.log(str);
+    document.getElementById("mata").innerHTML=str;
 
     resoudre.disabled=false;
     
