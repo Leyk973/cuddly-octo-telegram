@@ -56,3 +56,33 @@ header{
     font-size:20px;     
 }
 
+.matlu{
+    position:relative;
+    display:inline-block;
+    margin:5px;
+}
+
+.matlu:before, .matlu:after{
+    content:"";
+    position: absolute;
+    top:0;
+    border:1px solid #000;
+    width:6px;
+    height:100%;
+}
+
+.matlu:before{
+    left:-6px;
+    border-right:0px;
+}
+
+.matlu:after{
+    right:-6px;
+    border-left:0px;
+}
+
+.matlu td{
+    padding:5px;
+    text-align: center;
+}
+
