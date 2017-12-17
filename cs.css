@@ -59,6 +59,7 @@ header{
 .matlu{
     position:relative;
     display:inline-block;
+    visibility: hidden;
     margin:5px;
 }
 
@@ -86,3 +87,11 @@ header{
     text-align: center;
 }
 
+#ixe{
+    visibility: hidden;
+}
+
+#egal1{
+    display:inline-block;
+
+}

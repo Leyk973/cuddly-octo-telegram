@@ -98,15 +98,28 @@ echelon.onclick=function(){
         }
         b[i]=document.getElementById("b"+i).value;
     }
+    document.getElementById("ixe").style.visibility="visible";
+    document.getElementById("egal1").style.visibility="visible";
+    document.getElementById("mata").style.visibility="visible";
+    document.getElementById("matb").style.visibility="visible";
+
+
     switch(methode){
+        
         case "gauss":
+
+        document.getElementById("egal2").style.visibility="hidden";
+        document.getElementById("egal2").style.position="absolute";
+        document.getElementById("matl").style.visibility="hidden";
+        document.getElementById("matu").style.visibility="hidden";
+        document.getElementById("matl").style.position="absolute";
+        document.getElementById("matu").style.position="absolute";
+        document.getElementById("ixe2").style.visibility="hidden";
+        document.getElementById("ixe2").style.position="absolute";
+
         l=0;
         k=0;
-        
-        
-    
-        
-        
+
         while(l<ordre.value && k <ordre.value){
             profil=[];
             var lig=l;
@@ -145,23 +158,40 @@ echelon.onclick=function(){
             k++;
         }
 
-        for (i=0;i<m.length;i++){
-            for (j=0;j<m.length;j++){
-                document.getElementById(i+","+j).value=m[i][j];
-            }
-        }
-        for (i=0;i<b.length;i++){
-            document.getElementById("b"+i).value=b[i];
-        }
+        
 
         break;
 
         case "lu":
+        document.getElementById("matl").style.position="relative";
+        document.getElementById("matu").style.position="relative";
+        document.getElementById("matl").style.visibility="visible";
+        document.getElementById("matu").style.visibility="visible";
+
+        document.getElementById("egal2").style.position="relative";
+        document.getElementById("egal2").style.visibility="visible";
+        document.getElementById("ixe2").style.visibility="visible";
+        document.getElementById("ixe2").style.position="relative";
+
+
+        //Initialisation des matrices l et u
+        lower=new Array(n);
+        for (i=0;i<n;i++){
+            lower[i]=new Array(n);
+        }
+        upper=new Array(n);
+        for (i=0;i<n;i++){
+            upper[i]=new Array(n);
+        }
+
+        transfoLU();
+
+
             var str="";
             for (i=0;i<n;i++){
                 str+="<tr>";
                 for (j=0;j<n;j++){
-                    str+="<td><label id='l"+i+","+j+"'>l?</label></td>";
+                    str+="<td><label>"+String(lower[i][j]).substring(0,6)+"</label></td>";
                     
                 }
                 str+="</tr>";
@@ -174,30 +204,37 @@ echelon.onclick=function(){
             for (i=0;i<n;i++){
                 str+="<tr>";
                 for (j=0;j<n;j++){
-                    str+="<td><label id='u"+i+","+j+"'>u?</label></td>";
+                    str+="<td><label>"+String(upper[i][j]).substring(0,6)+"</label></td>";
                     
                 }
                 str+="</tr>";
             }
             document.getElementById("matu").innerHTML=str;
         break;
-        
-    
 
     }
-    
 
+    //Ici, on affiche les matrices après l'échelonnement/factorisation
+    var strx="";
     var str="";
+    var strb="";
     for (i=0;i<n;i++){
+        strx+="<td><label>x"+(i+1)+"</label></td>";
         str+="<tr>";
+        strb+="<tr><td><label id='mb"+i+"'>"+String(b[i]).substr(0,6)+"</label></td></tr>";
         for (j=0;j<n;j++){
             str+="<td><label id='a"+i+","+j+"'>"+String(m[i][j]).substr(0,6)+"</label></td>";
             
         }
         str+="</tr>";
     }
-    console.log(str);
+
+
+
     document.getElementById("mata").innerHTML=str;
+    document.getElementById("matb").innerHTML=strb;
+    document.getElementById("ixe").innerHTML=strx;
+    document.getElementById("ixe2").innerHTML=strx;
 
     resoudre.disabled=false;
     
@@ -249,7 +286,11 @@ function transfoLU(){
 
     // Initialisation
     // U = A
-    upper = m;
+    for (i=0;i<n;i++){
+        for (j=0;j<n;j++){
+            upper[i][j]=m[i][j];
+        }
+    }
 
     // L = I
     for (i = 0; i < n; ++i){
