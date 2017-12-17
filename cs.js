@@ -229,7 +229,7 @@ echelon.onclick=function(){
     var str="";
     var strb="";
     for (i=0;i<n;i++){
-        strx+="<td><label>x"+(i+1)+"</label></td>";
+        strx+="<tr><td><label>x"+(i+1)+"</label></td></tr>";
         str+="<tr>";
         strb+="<tr><td><label id='mb"+i+"'>"+String(b[i]).substr(0,6)+"</label></td></tr>";
         for (j=0;j<n;j++){
