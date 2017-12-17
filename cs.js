@@ -20,8 +20,7 @@ var x;//la solution sous forme de tableau
 var y;//la solution y dans LUx=b telle que Ux=y => Ly=b
 var radios=document.getElementsByName("methode");
 var methode="gauss";
-
-
+var determiner=document.getElementById("calcDet");
 
 
 
@@ -53,6 +52,7 @@ ok.onclick=function(){
     if (ordre.value!=null){
         random.disabled=false;
         echelon.disabled=false;
+        determiner.disabled=false;
         n=ordre.value;
         m=new Array(n);
         for (i=0;i<n;i++){
@@ -290,6 +290,13 @@ resoudre.onclick=function(){
     
 }
 
+
+
+
+
+
+
+
 function solution(num){
     if (num==n-1){
         x[num]=b[num]/m[num][num];
@@ -422,3 +429,22 @@ function calcDetByLU(matP){
 
     return det;
 }
+
+
+//// TEST
+determiner.onclick=function(){
+    var detrmnt;    
+    var matini;
+    matini=new Array(n);
+    for (i=0;i<n;i++){
+        matini[i]=new Array(n)
+    }
+    for (i=0;i<n;i++){
+        for (j=0;j<n;j++){
+            matini[i][j]=document.getElementById(i+","+j).value;
+        }
+    }
+    detrmnt = calcDetByLU(matini);
+    console.log("determinant de A : " + detrmnt);
+}
+//// TEST
