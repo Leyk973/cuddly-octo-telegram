@@ -11,7 +11,7 @@
     <header>
         <h1>Résolution de systèmes matriciels</h1>
     </header>
-    
+    <div style="margin:30px;">
         <input type="radio" id="gauss" name="methode" value="gauss" checked/>
         <label for="gauss">Élimination de Gauss</label>
         <input type="radio" id="lu" name="methode" value="lu"/>
@@ -20,10 +20,10 @@
         <label for="cholesky">Factorisation de Cholesky</label>
         <br>
         <label>Ordre de la matrice: </label>
-        <input id="ordre" type="number" max="20" min="0" />
+        <input id="ordre" type="number" max="100" min="0" />
         <input id="okbutton" type="button" value="OK" class="bouton" />
         <input type="button" id="random" value="Générer des valeurs aléatoires" class="bouton" disabled/>
-
+</div>
         <table id="matrice">
 
         </table>

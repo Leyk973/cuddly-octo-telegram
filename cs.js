@@ -17,6 +17,7 @@ var random=document.getElementById("random");
 var inputs=document.getElementsByClassName("mat");
 var resoudre=document.getElementById("resoudre");
 var x;//la solution sous forme de tableau
+var y;//la solution y dans LUx=b telle que Ux=y => Ly=b
 var radios=document.getElementsByName("methode");
 var methode="gauss";
 
@@ -49,16 +50,19 @@ function changeMethod(event){
 //génère les cases de la matrice 
 
 ok.onclick=function(){
-    if (ordre.value!=null && ordre.value<21){
+    if (ordre.value!=null){
         random.disabled=false;
         echelon.disabled=false;
-        m=new Array(ordre.value);
-        for (i=0;i<ordre.value;i++){
-            m[i]=new Array(ordre.value);
-        }
-        b=new Array(ordre.value);
-        x=new Array(ordre.value);
         n=ordre.value;
+        m=new Array(n);
+        for (i=0;i<n;i++){
+            m[i]=new Array(n);
+        }
+        
+        b=new Array(n);
+        x=new Array(n);
+        y=new Array(n);
+        
         string="<tr><th colspan="+n+">A</th><th>b</th></tr>";
         
        
@@ -90,8 +94,10 @@ ok.onclick=function(){
 
 
 var l=0,k=0;
+var start,end;
 
 echelon.onclick=function(){
+    start=new Date();
     for (i=0;i<n;i++){
         for (j=0;j<n;j++){
             m[i][j]=document.getElementById(i+","+j).value;
@@ -103,11 +109,11 @@ echelon.onclick=function(){
     document.getElementById("mata").style.visibility="visible";
     document.getElementById("matb").style.visibility="visible";
 
-
+    
     switch(methode){
         
         case "gauss":
-
+        
         document.getElementById("egal2").style.visibility="hidden";
         document.getElementById("egal2").style.position="absolute";
         document.getElementById("matl").style.visibility="hidden";
@@ -116,7 +122,7 @@ echelon.onclick=function(){
         document.getElementById("matu").style.position="absolute";
         document.getElementById("ixe2").style.visibility="hidden";
         document.getElementById("ixe2").style.position="absolute";
-
+        
         l=0;
         k=0;
 
@@ -144,8 +150,10 @@ echelon.onclick=function(){
                     
                     
                 for (i=l+1;i<n;i++){
+                    
                     var facteur=m[i][k]/m[l][k];
-                    for (j=k;j<n;j++){
+                    m[i][k]=0;
+                    for (j=k+1;j<n;j++){
                         m[i][j]-=facteur*m[l][j];
                     }
                     b[i]-=facteur*b[l];
@@ -159,7 +167,7 @@ echelon.onclick=function(){
         }
 
         
-
+        
         break;
 
         case "lu":
@@ -211,8 +219,10 @@ echelon.onclick=function(){
             }
             document.getElementById("matu").innerHTML=str;
         break;
-
+        
+        
     }
+    
 
     //Ici, on affiche les matrices après l'échelonnement/factorisation
     var strx="";
@@ -229,7 +239,8 @@ echelon.onclick=function(){
         str+="</tr>";
     }
 
-
+    end=new Date();
+    console.log(end.getTime() - start.getTime()+"ms");
 
     document.getElementById("mata").innerHTML=str;
     document.getElementById("matb").innerHTML=strb;
@@ -255,12 +266,28 @@ random.onclick=function(){
 
 
 resoudre.onclick=function(){
-    solution(0);
-    var s="";
-    for (i=0;i<x.length;i++){
-        s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
+    switch(methode){
+        case "gauss":
+        solution(0);
+        var s="";
+        for (i=0;i<x.length;i++){
+            s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
+        }
+        document.getElementById("x").innerHTML=s;
+        break;
+        case "lu":
+        solutionY(n-1);
+        solutionX(0);
+        var s="";
+        for (i=0;i<x.length;i++){
+            s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
+        }
+        document.getElementById("x").innerHTML=s;
+        break;
+        case "cholesky":
+        break;
     }
-    document.getElementById("x").innerHTML=s;
+    
 }
 
 function solution(num){
@@ -273,6 +300,34 @@ function solution(num){
             x[num]-=m[num][i]*solution(i);
         }
         x[num]/=m[num][num];
+        return x[num];
+    }
+}
+
+function solutionY(num){
+    if (num==0){
+        y[num]=b[num]/lower[num][num];
+        return y[num];
+    }else{
+        y[num]=b[num];
+        for (i=0;i<num;i++){
+            y[num]-=lower[num][i]*solutionY(i);
+        }
+        y[num]/=lower[num][num];
+        return y[num];
+    }
+}
+
+function solutionX(num){
+    if (num==n-1){
+        x[num]=y[num]/upper[num][num];
+        return x[num];
+    }else{
+        x[num]=y[num];
+        for (i=num+1;i<n;i++){
+            x[num]-=upper[num][i]*solutionX(i);
+        }
+        x[num]/=upper[num][num];
         return x[num];
     }
 }
