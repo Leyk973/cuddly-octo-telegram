@@ -402,6 +402,7 @@ function isSymetric(matC){
 // retourne le déterminant d'une matrice à partir de la U de sa décomposition LU
 // va être utile pour verifier si definie positive
 // param : matP : une matrice carree
+// param : np : ordre de la matrice en question
 function calcDetByLU(matP,nP){
     // variables locales
     var p; // pivot
@@ -415,7 +416,19 @@ function calcDetByLU(matP,nP){
 
     // Initialisation
     // U = A
-    u = matP;
+    var matu;
+    matu = new Array(nP);
+    for (i=0;i<n-1;i++){
+        matu[i]=new Array(nP);
+    }
+    for (i=0;i<nP;++i){
+        for (j=0;j<nP;++j){
+            matu[i][j]=matP[i][j];
+        }
+    }
+    //var u = matu;
+
+    //var u = matP;
 
     // Construction de L et U
     for (k = 0; k < nP; ++k){
@@ -449,7 +462,24 @@ determiner.onclick=function(){
             matini[i][j]=document.getElementById(i+","+j).value;
         }
     }
+
+//debug afficahge matini
+console.log("dans determiner AVANT deter matini");
+for (di=0;di<n;++di){
+    for (dj=0;dj<n;++dj){
+        console.log("matini("+di+","+dj+")="+matini[di][dj]);
+    }
+}
+
     detrmnt = calcDetByLU(matini,n);
+
+//debug afficahge matini
+console.log("dans determiner APRES deter matini");
+for (di=0;di<n;++di){
+    for (dj=0;dj<n;++dj){
+        console.log("matini("+di+","+dj+")="+matini[di][dj]);
+    }
+}
     console.log("determinant de A : " + detrmnt);
     if ((detrmnt != 0) && (detrmnt != null)){
         inverser.disabled=false;
