@@ -27,6 +27,7 @@ var detrmnt; // determinant de A
 var matini; // matrice initiale (pour calcul determinant/inverse)
 var temps;
 var start, end;
+var matlchol;// matrice L de Cholesky
 
 
 
@@ -225,6 +226,43 @@ echelon.onclick=function(){
             document.getElementById("matu").innerHTML=str;
         break;
         
+        case "cholesky" :
+        var mat, ci, cj, ck, somme;
+        // récupération de la matrice initiale
+        for (ci=0;ci<n;ci++){
+            for (cj=0;cj<n;cj++){
+                mat[ci][cj]=document.getElementById(ci+","+cj).value;
+            }
+        }
+        matlchol = new Array(n);
+        for (ci=0;ci<n;ci++){
+            matlchol[ci] = new Array(n);
+        }
+
+        //algo d'André-Louis
+        matlchol[0][0] = Math.sqrt(mat[0][0]);
+        for (cj=1; cj<n; cj++){
+            matlchol[cj][0] = mat[cj][0] / matlchol[0][0];
+        }
+        for (ci=1; ci<n-1; ci++){
+            somme = 0;
+            for (ck=0; ck<ci-1; ck++){
+                somme += Math.pow(matlchol[ci][ck],2);
+            }
+            matlchol[ci][ci] = Math.sqrt(mat[ci][ci] - somme);
+            for (cj=ci+1; cj<n; cj++){
+                somme=0;
+                for (ck=0; ck<(ci-1); ck++){
+                    somme+=(matlchol[cj][ck] * matlchol[ci][ck]);
+                }
+                matlchol[cj][ci]= (mat[cj][ci] - somme) / matlchol[ci][ci];
+            }
+        }
+        matlchol[n-1][n-1] = Math.sqrt(mat[n-1][n-1] - somme);
+
+
+        break;
+
         
     }
     
@@ -469,7 +507,8 @@ for (di=0;di<n;++di){
     }
 }
 
-
+// NOPE ON VA FAIRE CA PAR GAUSS JORDAN
+/*
 //ne pas oublier la puissance de -1
 inverser.onclick=function(){
     if ((detrmnt == 0)  || (isNaN(detrmnt))){
@@ -543,6 +582,56 @@ for (di=0;di<n;++di){
     }
 
 }
+*/
+
+inverser.onclick=function(){
+    /*var l,k;
+    l=0;
+    k=0;
+
+    while(l<ordre.value && k <ordre.value){
+        profil=[];
+        var lig=l;
+        var notfound=true;
+        while (notfound && lig<ordre.value){
+            if (m[lig][k]!=0){
+                profil.push(lig);
+                notfound=false;
+            }
+            lig++;
+        }
+        
+    
+        if (!notfound){
+            if (profil[0]!=l){
+                for (i=0;i<ordre.value;i++){
+                    lignetemporaire[i]=m[profil[0]][i];
+                    m[profil[0]][i]=m[l][i];
+                    m[l][i]=lignetemporaire[i];
+                }
+            }
+                
+                
+            for (i=l+1;i<n;i++){
+                
+                var facteur=m[i][k]/m[l][k];
+                m[i][k]=0;
+                for (j=k+1;j<n;j++){
+                    m[i][j]-=facteur*m[l][j];
+                }
+                b[i]-=facteur*b[l];
+            }
+
+            l++;
+            
+           
+        }
+        k++;
+    }
+
+*/
+}
+
 
 
 
