@@ -25,7 +25,7 @@ var inverser=document.getElementById("calcInv");
 var matInv; // matrice inverse de A
 var detrmnt; // determinant de A
 var matini; // matrice initiale (pour calcul determinant/inverse)
-var temps;
+var temps,temps2;
 var start, end;
 var matlchol;// matrice L de Cholesky
 
@@ -227,6 +227,7 @@ echelon.onclick=function(){
         break;
         
         case "cholesky" :
+        if (isSymetric(mat)){
         document.getElementById("matl").style.position="relative";
         document.getElementById("matu").style.position="relative";
         document.getElementById("matl").style.visibility="visible";
@@ -236,48 +237,11 @@ echelon.onclick=function(){
         document.getElementById("egal2").style.visibility="visible";
         document.getElementById("ixe2").style.visibility="visible";
         document.getElementById("ixe2").style.position="relative";
-        var mat, ci, cj, ck, somme;
-        // récupération de la matrice initiale
-        mat=new Array(n);
-        for (ci=0;ci<n;ci++){
-            mat[ci]=new Array(n);
-            for (cj=0;cj<n;cj++){
-                mat[ci][cj]=document.getElementById(ci+","+cj).value;
-            }
-        }
-        if (isSymetric(mat)){
-            matlchol = new Array(n);
-            for (ci=0;ci<n;ci++){
-                matlchol[ci] = new Array(n);
-            }
-    
-            for (ci=0; ci<n; ci++){
-                for(cj=0; cj<n; cj++){
-                    matlchol[ci][cj]=0;
-                }
-            }
-            //algo d'André-Louis
-            matlchol[0][0] = Math.sqrt(mat[0][0]);
-            for (cj=1; cj<n; cj++){
-                matlchol[cj][0] = mat[cj][0] / matlchol[0][0];
-            }
-            for (ci=1; ci<n-1; ci++){
-                somme = 0;
-                for (ck=0; ck<ci-1; ck++){
-                    somme += Math.pow(matlchol[ci][ck],2);
-                }
-                matlchol[ci][ci] = Math.sqrt(mat[ci][ci] - somme);
-                for (cj=ci+1; cj<n; cj++){
-                    somme=0;
-                    for (ck=0; ck<(ci-1); ck++){
-                        somme+=(matlchol[cj][ck] * matlchol[ci][ck]);
-                    }
-                    matlchol[cj][ci]= (mat[cj][ci] - somme) / matlchol[ci][ci];
-                }
-            }
-            matlchol[n-1][n-1] = Math.sqrt(mat[n-1][n-1] - somme);
-
         
+        
+            
+
+        factoCholesky();
 
         
             str="";
@@ -313,6 +277,8 @@ echelon.onclick=function(){
     }
     
 
+    
+
     //Ici, on affiche les matrices après l'échelonnement/factorisation
     var strx="";
     var str="";
@@ -338,6 +304,48 @@ echelon.onclick=function(){
 
     resoudre.disabled=false;
     
+}
+
+function factoCholesky(){
+    var mat, ci, cj, ck, somme;
+    // récupération de la matrice initiale
+    mat=new Array(n);
+    for (ci=0;ci<n;ci++){
+        mat[ci]=new Array(n);
+        for (cj=0;cj<n;cj++){
+            mat[ci][cj]=m[ci][cj];
+        }
+    }
+    matlchol = new Array(n);
+    for (ci=0;ci<n;ci++){
+        matlchol[ci] = new Array(n);
+    }
+
+    for (ci=0; ci<n; ci++){
+        for(cj=0; cj<n; cj++){
+            matlchol[ci][cj]=0;
+        }
+    }
+    //algo d'André-Louis
+    matlchol[0][0] = Math.sqrt(mat[0][0]);
+    for (cj=1; cj<n; cj++){
+        matlchol[cj][0] = mat[cj][0] / matlchol[0][0];
+    }
+    for (ci=1; ci<n-1; ci++){
+        somme = 0;
+        for (ck=0; ck<ci-1; ck++){
+            somme += Math.pow(matlchol[ci][ck],2);
+        }
+        matlchol[ci][ci] = Math.sqrt(mat[ci][ci] - somme);
+        for (cj=ci+1; cj<n; cj++){
+            somme=0;
+            for (ck=0; ck<(ci-1); ck++){
+                somme+=(matlchol[cj][ck] * matlchol[ci][ck]);
+            }
+            matlchol[cj][ci]= (mat[cj][ci] - somme) / matlchol[ci][ci];
+        }
+    }
+    matlchol[n-1][n-1] = Math.sqrt(mat[n-1][n-1] - somme);
 }
 
 
@@ -754,10 +762,10 @@ inverser.onclick=function(){
 
 document.getElementById("comparaison").onclick=function(){
     
-        var size=100;
+        var size=document.getElementById("size").value;
         temps=new Array(size);
+        temps2=new Array(size);
         var labels=new Array(size);
-
   
         for (var i=1;i<=size;i++){
 
@@ -791,6 +799,36 @@ document.getElementById("comparaison").onclick=function(){
             end=new Date();
             temps[i-1]=(end.getTime()-start.getTime());
         }
+        for (var i=1;i<=size;i++){
+            
+            start=new Date();
+
+            n=i*10;
+            m=new Array(n);
+            for (var j=0;j<n;j++){
+                m[j]=new Array(n);
+            }
+            b=new Array(n);
+            x=new Array(n);
+            y=new Array(n);
+    
+            lower=new Array(n);
+            for (var j=0;j<n;j++){
+                lower[j]=new Array(n);
+            }
+            upper=new Array(n);
+            for (var j=0;j<n;j++){
+                upper[j]=new Array(n);
+            }
+    
+            randomSymetric(n);
+    
+            factoCholesky();
+            solutionCholesky();
+
+            end=new Date();
+            temps2[i-1]=(end.getTime()-start.getTime());
+        }
         var ctx = document.getElementById("myChart").getContext('2d');
         var myChart = new Chart(ctx, {
             type: 'line',
@@ -801,6 +839,11 @@ document.getElementById("comparaison").onclick=function(){
                     data:temps,
                     label: "LU",
                     borderColor: 'red'
+                },
+                {
+                 data:temps2,
+                 label:"Cholesky",
+                 borderColor:"blue"   
                 }]  
             },
             options: {
