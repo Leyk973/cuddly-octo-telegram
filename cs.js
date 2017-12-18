@@ -551,8 +551,8 @@ document.getElementById("comparaison").onclick=function(){
         var size=100;
         temps=new Array(size);
         var labels=new Array(size);
-    
-    
+
+  
         for (var i=1;i<=size;i++){
 
             start=new Date();
@@ -626,7 +626,6 @@ document.getElementById("comparaison").onclick=function(){
                 }
             }
         }
-        console.log(m);
     }
 
     
