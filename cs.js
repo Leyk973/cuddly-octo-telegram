@@ -20,9 +20,11 @@ var x;//la solution sous forme de tableau
 var y;//la solution y dans LUx=b telle que Ux=y => Ly=b
 var radios=document.getElementsByName("methode");
 var methode="gauss";
-
-
-
+var determiner=document.getElementById("calcDet");
+var inverser=document.getElementById("calcInv");
+var matInv; // matrice inverse de A
+var detrmnt; // determinant de A
+var matini; // matrice initiale (pour calcul determinant/inverse)
 
 
 
@@ -53,6 +55,7 @@ ok.onclick=function(){
     if (ordre.value!=null){
         random.disabled=false;
         echelon.disabled=false;
+        determiner.disabled=false;
         n=ordre.value;
         m=new Array(n);
         for (i=0;i<n;i++){
@@ -290,6 +293,13 @@ resoudre.onclick=function(){
     
 }
 
+
+
+
+
+
+
+
 function solution(num){
     if (num==n-1){
         x[num]=b[num]/m[num][num];
@@ -392,33 +402,161 @@ function isSymetric(matC){
 // retourne le déterminant d'une matrice à partir de la U de sa décomposition LU
 // va être utile pour verifier si definie positive
 // param : matP : une matrice carree
-function calcDetByLU(matP){
+// param : np : ordre de la matrice en question
+function calcDetByLU(matP,nP){
     // variables locales
     var p; // pivot
     var q; // qivot
     var u; // matrice U
     var det = 1; // retour de la fonction, le determinant de matP
 
+// teststgtssttstst for debug
+    var iniI = i;
+    var iniJ = j;
+
     // Initialisation
     // U = A
-    u = matP;
+    var matu;
+    matu = new Array(nP);
+    for (i=0;i<n-1;i++){
+        matu[i]=new Array(nP);
+    }
+    for (i=0;i<nP;++i){
+        for (j=0;j<nP;++j){
+            matu[i][j]=matP[i][j];
+        }
+    }
+    //var u = matu;
+
+    //var u = matP;
 
     // Construction de L et U
-    for (k = 0; k < n; ++k){
+    for (k = 0; k < nP; ++k){
         p = u[k][k];
-        for (i = k+1; i < n; ++i){
+        for (i = k+1; i < nP; ++i){
             q = u[i][k];
             u[i][k] = 0;
-            for (j = k+1; j < n; ++j){
+            for (j = k+1; j < nP; ++j){
                 u[i][j] = u[i][j] - ( ( q/p ) * u[k][j]);
             }
         }
     }
 
     // Calcul du déterminant
-    for (i = 0 ; i < n; ++i){
+    for (i = 0 ; i < nP; ++i){
         det *= u[i][i];
     }
 
+    i= iniI;
+    j= iniJ;
     return det;
+}
+
+determiner.onclick=function(){  
+    matini=new Array(n);
+    for (i=0;i<n;i++){
+        matini[i]=new Array(n)
+    }
+    for (i=0;i<n;i++){
+        for (j=0;j<n;j++){
+            matini[i][j]=document.getElementById(i+","+j).value;
+        }
+    }
+
+//debug afficahge matini
+console.log("dans determiner AVANT deter matini");
+for (di=0;di<n;++di){
+    for (dj=0;dj<n;++dj){
+        console.log("matini("+di+","+dj+")="+matini[di][dj]);
+    }
+}
+
+    detrmnt = calcDetByLU(matini,n);
+
+//debug afficahge matini
+console.log("dans determiner APRES deter matini");
+for (di=0;di<n;++di){
+    for (dj=0;dj<n;++dj){
+        console.log("matini("+di+","+dj+")="+matini[di][dj]);
+    }
+}
+    console.log("determinant de A : " + detrmnt);
+    if ((detrmnt != 0) && (detrmnt != null)){
+        inverser.disabled=false;
+    }
+}
+
+
+//ne pas oublier la puissance de -1
+inverser.onclick=function(){
+    if ((detrmnt == 0)  || (isNaN(detrmnt))){
+        console.log("determinant de A nul : matrice non inversible");
+    } else if (detrmnt == null){
+        console.log("veuillez d'abord calculer le determinant");
+    } else {
+        console.log("calcul de l'inverse");
+        // initialisation de la matrice adjointe
+        var matAdj;
+        matAdj=new Array(n);
+        for (i=0;i<n;i++){
+            matAdj[i]=new Array(n)
+        }
+        // calcul des coefficients de adj
+        var sousMat;
+        sousMat=new Array(n-1);
+        for (i=0;i<n-1;i++){
+            sousMat[i]=new Array(n-1)
+        }
+
+//debug afficahge matini
+for (di=0;di<n;++di){
+    for (dj=0;dj<n;++dj){
+        console.log("matini("+di+","+dj+")="+matini[di][dj]);
+    }
+}
+
+        var cofi, cofj;
+
+        for (i=0;i<n;i++){
+            console.log("dansI---"+i+" n vaut ---" + n);
+            for (j=0;j<n;++j){
+                console.log("dansJ---"+i+"/"+j+"---");
+                //sous matrice
+                cofi=0;
+                for (inti=0;inti<n;++inti){
+                    if (inti != i){ // ligne a prendre en compte pour le calcul du cofacteur
+                        cofj=0;
+                        for (intj=0;intj<n;++intj){
+                            if(intj != j){ // colonne a prendre en compte pour le calcul du cofacteur
+                                sousMat[cofi][cofj]=matini[inti][intj];
+                                ++cofj;
+                            }
+                        }
+                        ++cofi;
+                    }                    
+                }
+                
+                console.log("---"+i+"/"+j+"---");
+                //debug afficahge sousmat
+                for (di=0;di<n-1;++di){
+                    for (dj=0;dj<n-1;++dj){
+                        console.log("sousmat["+i+j+"]("+di+","+dj+")="+sousMat[di][dj]);
+                    }
+                }
+
+
+                // deter sous mat
+                matAdj[i][j] = Math.pow(-1,i+j);
+                matAdj[i][j] *= calcDetByLU(sousMat,n-1);
+                console.log("matAdj("+i+","+j+") = "+matAdj[i][j]);
+            }
+            console.log("FIN I ---"+i+" n vaut ---" + n);
+            console.log("FIN I2 ---"+i+" n vaut ---" + n);
+        }
+
+        // passage a la transposée
+        // matInv <- tr(adj)
+        // matInv *= 1/det
+    }
+
 }
