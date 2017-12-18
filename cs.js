@@ -25,6 +25,8 @@ var inverser=document.getElementById("calcInv");
 var matInv; // matrice inverse de A
 var detrmnt; // determinant de A
 var matini; // matrice initiale (pour calcul determinant/inverse)
+var temps;
+var start, end;
 
 
 
@@ -56,7 +58,7 @@ ok.onclick=function(){
         random.disabled=false;
         echelon.disabled=false;
         determiner.disabled=false;
-        n=ordre.value;
+        n=Math.round(ordre.value);
         m=new Array(n);
         for (i=0;i<n;i++){
             m[i]=new Array(n);
@@ -271,7 +273,7 @@ random.onclick=function(){
 resoudre.onclick=function(){
     switch(methode){
         case "gauss":
-        solution(0);
+        solutionIterative();
         var s="";
         for (i=0;i<x.length;i++){
             s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
@@ -279,8 +281,8 @@ resoudre.onclick=function(){
         document.getElementById("x").innerHTML=s;
         break;
         case "lu":
-        solutionY(n-1);
-        solutionX(0);
+        solutionIterativeY();
+        solutionIterativeX();
         var s="";
         for (i=0;i<x.length;i++){
             s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
@@ -290,55 +292,36 @@ resoudre.onclick=function(){
         case "cholesky":
         break;
     }
-    
+
 }
 
-
-
-
-
-
-
-
-function solution(num){
-    if (num==n-1){
-        x[num]=b[num]/m[num][num];
-        return x[num];
-    }else{
-        x[num]=b[num];
-        for (i=num+1;i<n;i++){
-            x[num]-=m[num][i]*solution(i);
+function solutionIterative(){
+    for (var i=n-1;i>=0;i--){
+        x[i]=b[i];
+        for (var j=i+1;j<n;j++){
+            x[i]-=m[i][j]*x[j];
         }
-        x[num]/=m[num][num];
-        return x[num];
+        x[i]/=m[i][i];
     }
 }
 
-function solutionY(num){
-    if (num==0){
-        y[num]=b[num]/lower[num][num];
-        return y[num];
-    }else{
-        y[num]=b[num];
-        for (i=0;i<num;i++){
-            y[num]-=lower[num][i]*solutionY(i);
+
+function solutionIterativeY(){
+    for (var i=0;i<n;i++){
+        y[i]=b[i];
+        for (var j=0;j<i;j++){
+            y[i]-=lower[i][j]*y[j];
         }
-        y[num]/=lower[num][num];
-        return y[num];
     }
 }
 
-function solutionX(num){
-    if (num==n-1){
-        x[num]=y[num]/upper[num][num];
-        return x[num];
-    }else{
-        x[num]=y[num];
-        for (i=num+1;i<n;i++){
-            x[num]-=upper[num][i]*solutionX(i);
+function solutionIterativeX(){
+    for (var i=n-1;i>=0;i--){
+        x[i]=y[i];
+        for (var j=i+1;j<n;j++){
+            x[i]-=upper[i][j]*x[j];
         }
-        x[num]/=upper[num][num];
-        return x[num];
+        x[i]/=upper[i][i];
     }
 }
 
@@ -560,3 +543,56 @@ for (di=0;di<n;++di){
     }
 
 }
+
+
+
+document.getElementById("comparaison").onclick=function(){
+    
+        var size=100;
+        temps=new Array(size);
+    
+    
+    
+        for (var i=1;i<=size;i++){
+            start=new Date();
+            n=i*10;
+            m=new Array(n);
+            for (var j=0;j<n;j++){
+                m[j]=new Array(n);
+            }
+            b=new Array(n);
+            x=new Array(n);
+            y=new Array(n);
+    
+            lower=new Array(n);
+            for (var j=0;j<n;j++){
+                lower[j]=new Array(n);
+            }
+            upper=new Array(n);
+            for (var j=0;j<n;j++){
+                upper[j]=new Array(n);
+            }
+    
+            randomSymetric(n);
+    
+            transfoLU();
+            solutionIterativeY();
+            solutionIterativeX();
+            console.log(m);
+            end=new Date();
+            temps[i-1]=(end.getTime()-start.getTime());
+        }
+    
+        console.log(temps);
+    
+    }
+    
+    function randomSymetric(nb){
+        for (var i=0;i<nb;i++){
+            for (var j=i;j<nb;j++){
+                m[i][j]=Math.round(Math.random()*20);
+                m[j][i]=m[i][j];
+            }
+            b[i]=Math.round(Math.random()*20);
+        }
+    }

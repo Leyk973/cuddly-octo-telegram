@@ -23,6 +23,7 @@
         <input id="ordre" type="number" max="100" min="0" />
         <input id="okbutton" type="button" value="OK" class="bouton" />
         <input type="button" id="random" value="Générer des valeurs aléatoires" class="bouton" disabled/>
+        <input type="button" id="comparaison" value="Comparer les méthodes LU et Cholesky" class="bouton" /> 
 </div>
         <table id="matrice">
 
@@ -33,7 +34,7 @@
         </table>
         <table id="ixe" style="display:inline-block" class="matlu">
             <tr id="trx">
-                <td >
+                <td>
                     X
                 </td>
             </tr>
@@ -53,7 +54,7 @@
 
         <table id="ixe2" style="display:inline-block;visibility:hidden;position:absolute" class="matlu">
             <tr id="trx2">
-                <td >
+                <td>
                     X
                 </td>
             </tr>
@@ -77,6 +78,7 @@
             
         </table>
 </div>
+    <canvas id="myChart" width="400" height="400"></canvas>
     <script src="cs.js"></script>
 </body>
 
