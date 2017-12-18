@@ -251,6 +251,11 @@ echelon.onclick=function(){
                 matlchol[ci] = new Array(n);
             }
     
+            for (ci=0; ci<n; ci++){
+                for(cj=0; cj<n; cj++){
+                    matlchol[ci][cj]=0;
+                }
+            }
             //algo d'André-Louis
             matlchol[0][0] = Math.sqrt(mat[0][0]);
             for (cj=1; cj<n; cj++){
@@ -272,21 +277,9 @@ echelon.onclick=function(){
             }
             matlchol[n-1][n-1] = Math.sqrt(mat[n-1][n-1] - somme);
 
-        for (ci=0; ci<n; ci++){
-            for(cj=0; cj<n; cj++){
-                matlchol[ci][cj]=0;
-            }
-        }
+        
 
-        //algo d'André-Louis
-        matlchol[0][0] = Math.sqrt(mat[0][0]);
-        for (cj=1; cj<n; cj++){
-            matlchol[cj][0] = mat[cj][0] / matlchol[0][0];
-        }
-        for (ci=1; ci<n-1; ci++){
-            somme = 0;
-            for (ck=0; ck<ci-1; ck++){
-                somme += Math.pow(matlchol[ci][ck],2);
+        
             str="";
             for (i=0;i<n;i++){
                 str+="<tr>";
