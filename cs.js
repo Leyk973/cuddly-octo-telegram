@@ -585,8 +585,6 @@ document.getElementById("comparaison").onclick=function(){
             end=new Date();
             temps[i-1]=(end.getTime()-start.getTime());
         }
-        console.log(labels);
-        console.log(temps);
         var ctx = document.getElementById("myChart").getContext('2d');
         var myChart = new Chart(ctx, {
             type: 'line',
@@ -608,13 +606,27 @@ document.getElementById("comparaison").onclick=function(){
     }
     
     function randomSymetric(nb){
+        var r=new Array(nb);
+        for (var i=0;i<nb;i++){
+            r[i]=new Array(nb);
+        }
         for (var i=0;i<nb;i++){
             for (var j=i;j<nb;j++){
-                m[i][j]=Math.round(Math.random()*20);
-                m[j][i]=m[i][j];
+                r[i][j]=Math.round(Math.random()*3);
+                r[j][i]=r[i][j];
             }
-            b[i]=Math.round(Math.random()*20);
+            b[i]=Math.round(Math.random()*3);
         }
+        console.log(r);
+        for (var i=0;i<nb;i++){
+            for (var j=0;j<nb;j++){
+                m[i][j]=0;
+                for (var k=0;k<nb;k++){
+                    m[i][j]+=r[i][k]*r[k][j];
+                }
+            }
+        }
+        console.log(m);
     }
 
     
