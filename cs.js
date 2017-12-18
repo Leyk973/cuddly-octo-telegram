@@ -401,7 +401,7 @@ function calcDetByLU(matP,nP){
     // U = A
     var matu;
     matu = new Array(nP);
-    for (i=0;i<n-1;i++){
+    for (i=0;i<nP;i++){
         matu[i]=new Array(nP);
     }
     for (i=0;i<nP;++i){
@@ -415,19 +415,19 @@ function calcDetByLU(matP,nP){
 
     // Construction de L et U
     for (k = 0; k < nP; ++k){
-        p = u[k][k];
+        p = matu[k][k];
         for (i = k+1; i < nP; ++i){
-            q = u[i][k];
-            u[i][k] = 0;
+            q = matu[i][k];
+            matu[i][k] = 0;
             for (j = k+1; j < nP; ++j){
-                u[i][j] = u[i][j] - ( ( q/p ) * u[k][j]);
+                matu[i][j] = matu[i][j] - ( ( q/p ) * matu[k][j]);
             }
         }
     }
 
     // Calcul du déterminant
     for (i = 0 ; i < nP; ++i){
-        det *= u[i][i];
+        det *= matu[i][i];
     }
 
     i= iniI;
@@ -447,22 +447,22 @@ determiner.onclick=function(){
     }
 
 //debug afficahge matini
-console.log("dans determiner AVANT deter matini");
+/*console.log("dans determiner AVANT deter matini");
 for (di=0;di<n;++di){
     for (dj=0;dj<n;++dj){
         console.log("matini("+di+","+dj+")="+matini[di][dj]);
     }
-}
+}*/
 
     detrmnt = calcDetByLU(matini,n);
 
 //debug afficahge matini
-console.log("dans determiner APRES deter matini");
+/*console.log("dans determiner APRES deter matini");
 for (di=0;di<n;++di){
     for (dj=0;dj<n;++dj){
         console.log("matini("+di+","+dj+")="+matini[di][dj]);
     }
-}
+}*/
     console.log("determinant de A : " + detrmnt);
     if ((detrmnt != 0) && (detrmnt != null)){
         inverser.disabled=false;
