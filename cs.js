@@ -21,7 +21,7 @@ var y;//la solution y dans LUx=b telle que Ux=y => Ly=b
 var radios=document.getElementsByName("methode");
 var methode="gauss";
 
-var temps;
+
 
 
 
@@ -53,8 +53,7 @@ ok.onclick=function(){
     if (ordre.value!=null){
         random.disabled=false;
         echelon.disabled=false;
-        n=Math.round(ordre.value);
-        
+        n=ordre.value;
         m=new Array(n);
         for (i=0;i<n;i++){
             m[i]=new Array(n);
@@ -68,9 +67,9 @@ ok.onclick=function(){
         
        
         
-        for (i=0;i<n;i++){
+        for (i=0;i<ordre.value;i++){
             string+="<tr>";
-            for (j=0;j<n;j++){
+            for (j=0;j<ordre.value;j++){
                 string+="<td><input type='number' id='"+i+","+j+"' value='0' class=mat onclick=this.select(); /></td>";
                 
             }
@@ -98,6 +97,7 @@ var l=0,k=0;
 var start,end;
 
 echelon.onclick=function(){
+    start=new Date();
     for (i=0;i<n;i++){
         for (j=0;j<n;j++){
             m[i][j]=document.getElementById(i+","+j).value;
@@ -126,11 +126,11 @@ echelon.onclick=function(){
         l=0;
         k=0;
 
-        while(l<n && k <n){
+        while(l<ordre.value && k <ordre.value){
             profil=[];
             var lig=l;
             var notfound=true;
-            while (notfound && lig<n){
+            while (notfound && lig<ordre.value){
                 if (m[lig][k]!=0){
                     profil.push(lig);
                     notfound=false;
@@ -141,7 +141,7 @@ echelon.onclick=function(){
         
             if (!notfound){
                 if (profil[0]!=l){
-                    for (i=0;i<n;i++){
+                    for (i=0;i<ordre.value;i++){
                         lignetemporaire[i]=m[profil[0]][i];
                         m[profil[0]][i]=m[l][i];
                         m[l][i]=lignetemporaire[i];
@@ -239,6 +239,8 @@ echelon.onclick=function(){
         str+="</tr>";
     }
 
+    end=new Date();
+    console.log(end.getTime() - start.getTime()+"ms");
 
     document.getElementById("mata").innerHTML=str;
     document.getElementById("matb").innerHTML=strb;
@@ -266,7 +268,7 @@ random.onclick=function(){
 resoudre.onclick=function(){
     switch(methode){
         case "gauss":
-        solutionIterative();
+        solution(0);
         var s="";
         for (i=0;i<x.length;i++){
             s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
@@ -274,8 +276,8 @@ resoudre.onclick=function(){
         document.getElementById("x").innerHTML=s;
         break;
         case "lu":
-        solutionIterativeY();
-        solutionIterativeX();
+        solutionY(n-1);
+        solutionX(0);
         var s="";
         for (i=0;i<x.length;i++){
             s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
@@ -288,34 +290,45 @@ resoudre.onclick=function(){
     
 }
 
-
-function solutionIterative(){
-    for (var i=n-1;i>=0;i--){
-        x[i]=b[i];
-        for (var j=i+1;j<n;j++){
-            x[i]-=m[i][j]*x[j];
+function solution(num){
+    if (num==n-1){
+        x[num]=b[num]/m[num][num];
+        return x[num];
+    }else{
+        x[num]=b[num];
+        for (i=num+1;i<n;i++){
+            x[num]-=m[num][i]*solution(i);
         }
-        x[i]/=m[i][i];
+        x[num]/=m[num][num];
+        return x[num];
     }
 }
 
-
-function solutionIterativeY(){
-    for (var i=0;i<n;i++){
-        y[i]=b[i];
-        for (var j=0;j<i;j++){
-            y[i]-=lower[i][j]*y[j];
+function solutionY(num){
+    if (num==0){
+        y[num]=b[num]/lower[num][num];
+        return y[num];
+    }else{
+        y[num]=b[num];
+        for (i=0;i<num;i++){
+            y[num]-=lower[num][i]*solutionY(i);
         }
+        y[num]/=lower[num][num];
+        return y[num];
     }
 }
 
-function solutionIterativeX(){
-    for (var i=n-1;i>=0;i--){
-        x[i]=y[i];
-        for (var j=i+1;j<n;j++){
-            x[i]-=upper[i][j]*x[j];
+function solutionX(num){
+    if (num==n-1){
+        x[num]=y[num]/upper[num][num];
+        return x[num];
+    }else{
+        x[num]=y[num];
+        for (i=num+1;i<n;i++){
+            x[num]-=upper[num][i]*solutionX(i);
         }
-        x[i]/=upper[i][i];
+        x[num]/=upper[num][num];
+        return x[num];
     }
 }
 
@@ -328,15 +341,15 @@ function transfoLU(){
 
     // Initialisation
     // U = A
-    for (var i=0;i<n;i++){
-        for (var j=0;j<n;j++){
+    for (i=0;i<n;i++){
+        for (j=0;j<n;j++){
             upper[i][j]=m[i][j];
         }
     }
 
     // L = I
-    for (var i = 0; i < n; ++i){
-        for (var j = 0; j < n; ++j){
+    for (i = 0; i < n; ++i){
+        for (j = 0; j < n; ++j){
             if (j != i){
                 lower[i][j]=0;
             } else {
@@ -346,13 +359,13 @@ function transfoLU(){
     }
 
     // Construction de L et U
-    for (var k = 0; k < n; ++k){
+    for (k = 0; k < n; ++k){
         p = upper[k][k];
-        for (var i = k+1; i < n; ++i){
+        for (i = k+1; i < n; ++i){
             q = upper[i][k];
             upper[i][k] = 0;
             lower[i][k] = q/p;
-            for (var j = k+1; j < n; ++j){
+            for (j = k+1; j < n; ++j){
                 upper[i][j] = upper[i][j] - ( ( q/p ) * upper[k][j]);
             }
         }
@@ -364,8 +377,8 @@ function transfoLU(){
 function isSymetric(matC){
     var sym = true;
 
-    for (var i = 0; i < n; ++i){
-        for (var j = 0; j < i; ++j){
+    for (i = 0; i < n; ++i){
+        for (j = 0; j < i; ++j){
             if(matC[i][j] != matC[j][i]){
                 sym = false;
             }
@@ -383,20 +396,12 @@ function calcDetByLU(matP){
     // variables locales
     var p; // pivot
     var q; // qivot
-    var u=new Array(matP.length); // matrice U
-    for (i=0;i<matP.length;i++){
-        u[i]=new Array(matP.length);
-    }
+    var u; // matrice U
     var det = 1; // retour de la fonction, le determinant de matP
 
     // Initialisation
     // U = A
-    for (i=0;i<n;i++){
-        for (j=0;j<n;j++){
-            u[i][j]=matP[i][j];
-        }
-    }
-
+    u = matP;
 
     // Construction de L et U
     for (k = 0; k < n; ++k){
@@ -417,96 +422,3 @@ function calcDetByLU(matP){
 
     return det;
 }
-
-
-document.getElementById("comparaison").onclick=function(){
-
-    var size=100;
-    temps=new Array(size);    
-
-
-   
-    for (var i=1;i<=size;i++){
-        start=new Date();
-        n=i*10;
-        m=new Array(n);
-        for (var j=0;j<n;j++){
-            m[j]=new Array(n);
-        }
-        b=new Array(n);
-        x=new Array(n);
-        y=new Array(n);
-        
-        lower=new Array(n);
-        for (var j=0;j<n;j++){
-            lower[j]=new Array(n);
-        }
-        upper=new Array(n);
-        for (var j=0;j<n;j++){
-            upper[j]=new Array(n);
-        }
-
-        randomSymetric(n);
-
-        transfoLU();
-        solutionIterativeY();
-        solutionIterativeX();
-        console.log(m);
-        end=new Date();
-        temps[i-1]=(end.getTime()-start.getTime());
-    }
-
-    console.log(temps);
-    
-}
-
-function randomSymetric(nb){
-    for (var i=0;i<nb;i++){
-        for (var j=i;j<nb;j++){
-            m[i][j]=Math.round(Math.random()*20);
-            m[j][i]=m[i][j];
-        }
-        b[i]=Math.round(Math.random()*20);
-    }
-}
-
-/*
-
-var ctx = document.getElementById("myChart").getContext('2d');
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
-});
-*/

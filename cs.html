@@ -7,25 +7,23 @@
     <title>Résolution de systèmes matriciels</title>
 </head>
 
-<body>
-    <div id="main">
-        <header>
-            <h1>Résolution de systèmes matriciels</h1>
-        </header>
-        <div style="margin:30px;">
-            <input type="radio" id="gauss" name="methode" value="gauss" checked/>
-            <label for="gauss">Élimination de Gauss</label>
-            <input type="radio" id="lu" name="methode" value="lu" />
-            <label for="lu">Factorisation LU</label>
-            <input type="radio" id="cholesky" name="methode" value="cholesky" />
-            <label for="cholesky">Factorisation de Cholesky</label>
-            <br>
-            <label>Ordre de la matrice: </label>
-            <input id="ordre" type="number" max="100" min="0" />
-            <input id="okbutton" type="button" value="OK" class="bouton" />
-            <input type="button" id="random" value="Générer des valeurs aléatoires" class="bouton" disabled/>
-            <input type="button" id="comparaison" value="Comparer les méthodes LU et Cholesky" class="bouton" />
-        </div>
+<body><div id="main">
+    <header>
+        <h1>Résolution de systèmes matriciels</h1>
+    </header>
+    <div style="margin:30px;">
+        <input type="radio" id="gauss" name="methode" value="gauss" checked/>
+        <label for="gauss">Élimination de Gauss</label>
+        <input type="radio" id="lu" name="methode" value="lu"/>
+        <label for="lu">Factorisation LU</label>
+        <input type="radio" id="cholesky" name="methode" value="cholesky"/>
+        <label for="cholesky">Factorisation de Cholesky</label>
+        <br>
+        <label>Ordre de la matrice: </label>
+        <input id="ordre" type="number" max="100" min="0" />
+        <input id="okbutton" type="button" value="OK" class="bouton" />
+        <input type="button" id="random" value="Générer des valeurs aléatoires" class="bouton" disabled/>
+</div>
         <table id="matrice">
 
         </table>
@@ -35,14 +33,14 @@
         </table>
         <table id="ixe" style="display:inline-block" class="matlu">
             <tr id="trx">
-                <td>
+                <td >
                     X
                 </td>
             </tr>
         </table>
 
         <label id="egal1" style="visibility:hidden;position:relative; height:50px">=</label>
-
+            
 
 
         <table id="matl" class="matlu">
@@ -55,16 +53,16 @@
 
         <table id="ixe2" style="display:inline-block;visibility:hidden;position:absolute" class="matlu">
             <tr id="trx2">
-                <td>
+                <td >
                     X
                 </td>
             </tr>
         </table>
 
         <label id="egal2" style="visibility:hidden;position:absolute">=</label>
-
+            
         <table id="matb" class="matlu">
-
+            
         </table>
         <br/>
 
@@ -74,10 +72,9 @@
         <input type="button" value="Résoudre" id="resoudre" disabled/>
 
         <table id="x">
-
+            
         </table>
-    </div>
-    <canvas id="myChart" width="400" height="400"></canvas>
+</div>
     <script src="cs.js"></script>
 </body>
 
