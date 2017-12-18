@@ -597,24 +597,7 @@ determiner.onclick=function(){
             matini[i][j]=document.getElementById(i+","+j).value;
         }
     }
-
-//debug afficahge matini
-/*console.log("dans determiner AVANT deter matini");
-for (di=0;di<n;++di){
-    for (dj=0;dj<n;++dj){
-        console.log("matini("+di+","+dj+")="+matini[di][dj]);
-    }
-}*/
-
     detrmnt = calcDetByLU(matini,n);
-
-//debug afficahge matini
-/*console.log("dans determiner APRES deter matini");
-for (di=0;di<n;++di){
-    for (dj=0;dj<n;++dj){
-        console.log("matini("+di+","+dj+")="+matini[di][dj]);
-    }
-}*/
     window.alert("determinant de A : " + detrmnt);
     if ((detrmnt != 0) && (detrmnt != null)){
         inverser.disabled=false;
@@ -701,52 +684,57 @@ for (di=0;di<n;++di){
 }
 */
 
-inverser.onclick=function(){
-    /*var l,k;
-    l=0;
-    k=0;
-
-    while(l<ordre.value && k <ordre.value){
-        profil=[];
-        var lig=l;
-        var notfound=true;
-        while (notfound && lig<ordre.value){
-            if (m[lig][k]!=0){
-                profil.push(lig);
-                notfound=false;
-            }
-            lig++;
-        }
-        
+inverser.onclick = function () {
     
-        if (!notfound){
-            if (profil[0]!=l){
-                for (i=0;i<ordre.value;i++){
-                    lignetemporaire[i]=m[profil[0]][i];
-                    m[profil[0]][i]=m[l][i];
-                    m[l][i]=lignetemporaire[i];
+    if ((detrmnt == 0) || (isNaN(detrmnt))) {
+        console.log("determinant de A nul : matrice non inversible");
+    } else if (detrmnt == null) {
+        console.log("veuillez d'abord calculer le determinant");
+    } else {
+        var l=0, k=0;
+        while (l < ordre.value && k < ordre.value) {
+            profil = [];
+            var lig = l;
+            var notfound = true;
+            // recherche
+            while (notfound && lig < ordre.value) {
+                if (m[lig][k] != 0) {
+                    profil.push(lig);
+                    notfound = false;
                 }
-            }
-                
-                
-            for (i=l+1;i<n;i++){
-                
-                var facteur=m[i][k]/m[l][k];
-                m[i][k]=0;
-                for (j=k+1;j<n;j++){
-                    m[i][j]-=facteur*m[l][j];
-                }
-                b[i]-=facteur*b[l];
+                lig++;
             }
 
-            l++;
-            
-           
+
+            if (!notfound) {
+                if (profil[0] != l) {
+                    for (i = 0; i < ordre.value; i++) {
+                        // echange de ligne
+                        lignetemporaire[i] = m[profil[0]][i];
+                        m[profil[0]][i] = m[l][i];
+                        m[l][i] = lignetemporaire[i];
+                    }
+                }
+
+
+                for (i = l + 1; i < n; i++) {
+
+                    var facteur = m[i][k] / m[l][k];
+                    m[i][k] = 0;
+                    for (j = k + 1; j < n; j++) {
+                        m[i][j] -= facteur * m[l][j];
+                    }
+                    b[i] -= facteur * b[l];
+                }
+
+                l++;
+
+
+            }
+            k++;
         }
-        k++;
     }
 
-*/
 }
 
 
