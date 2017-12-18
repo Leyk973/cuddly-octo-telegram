@@ -227,40 +227,78 @@ echelon.onclick=function(){
         break;
         
         case "cholesky" :
+        document.getElementById("matl").style.position="relative";
+        document.getElementById("matu").style.position="relative";
+        document.getElementById("matl").style.visibility="visible";
+        document.getElementById("matu").style.visibility="visible";
+
+        document.getElementById("egal2").style.position="relative";
+        document.getElementById("egal2").style.visibility="visible";
+        document.getElementById("ixe2").style.visibility="visible";
+        document.getElementById("ixe2").style.position="relative";
         var mat, ci, cj, ck, somme;
         // récupération de la matrice initiale
+        mat=new Array(n);
         for (ci=0;ci<n;ci++){
+            mat[ci]=new Array(n);
             for (cj=0;cj<n;cj++){
                 mat[ci][cj]=document.getElementById(ci+","+cj).value;
             }
         }
-        matlchol = new Array(n);
-        for (ci=0;ci<n;ci++){
-            matlchol[ci] = new Array(n);
-        }
-
-        //algo d'André-Louis
-        matlchol[0][0] = Math.sqrt(mat[0][0]);
-        for (cj=1; cj<n; cj++){
-            matlchol[cj][0] = mat[cj][0] / matlchol[0][0];
-        }
-        for (ci=1; ci<n-1; ci++){
-            somme = 0;
-            for (ck=0; ck<ci-1; ck++){
-                somme += Math.pow(matlchol[ci][ck],2);
+        if (isSymetric(mat)){
+            matlchol = new Array(n);
+            for (ci=0;ci<n;ci++){
+                matlchol[ci] = new Array(n);
             }
-            matlchol[ci][ci] = Math.sqrt(mat[ci][ci] - somme);
-            for (cj=ci+1; cj<n; cj++){
-                somme=0;
-                for (ck=0; ck<(ci-1); ck++){
-                    somme+=(matlchol[cj][ck] * matlchol[ci][ck]);
+    
+            //algo d'André-Louis
+            matlchol[0][0] = Math.sqrt(mat[0][0]);
+            for (cj=1; cj<n; cj++){
+                matlchol[cj][0] = mat[cj][0] / matlchol[0][0];
+            }
+            for (ci=1; ci<n-1; ci++){
+                somme = 0;
+                for (ck=0; ck<ci-1; ck++){
+                    somme += Math.pow(matlchol[ci][ck],2);
                 }
-                matlchol[cj][ci]= (mat[cj][ci] - somme) / matlchol[ci][ci];
+                matlchol[ci][ci] = Math.sqrt(mat[ci][ci] - somme);
+                for (cj=ci+1; cj<n; cj++){
+                    somme=0;
+                    for (ck=0; ck<(ci-1); ck++){
+                        somme+=(matlchol[cj][ck] * matlchol[ci][ck]);
+                    }
+                    matlchol[cj][ci]= (mat[cj][ci] - somme) / matlchol[ci][ci];
+                }
             }
+            matlchol[n-1][n-1] = Math.sqrt(mat[n-1][n-1] - somme);
+
+            str="";
+            for (i=0;i<n;i++){
+                str+="<tr>";
+                for (j=0;j<n;j++){
+                    str+="<td><label>"+String(matlchol[i][j]).substring(0,6)+"</label></td>";
+                    
+                }
+                str+="</tr>";
+            }
+            document.getElementById("matl").innerHTML=str;
+
+            str="";
+            for (i=0;i<n;i++){
+                str+="<tr>";
+                for (j=0;j<n;j++){
+                    str+="<td><label>"+String(matlchol[j][i]).substring(0,6)+"</label></td>";
+                    
+                }
+                str+="</tr>";
+            }
+            document.getElementById("matu").innerHTML=str;
+    
+            
+        }else{
+            window.alert("La matrice n'est pas symétrique et définie positive.");
         }
-        matlchol[n-1][n-1] = Math.sqrt(mat[n-1][n-1] - somme);
-
-
+        
         break;
 
         
@@ -297,13 +335,24 @@ echelon.onclick=function(){
 
 
 random.onclick=function(){
-    for (i=0;i<inputs.length;i++){
-        inputs[i].value=Math.round((Math.random()-0.5)*20);
+    if (methode!="cholesky"){
+        for (i=0;i<inputs.length;i++){
+            inputs[i].value=Math.round((Math.random()-0.5)*20);
+        }
+        var inputsb=document.getElementsByClassName("matb");
+        for (i=0;i<inputsb.length;i++){
+            inputsb[i].value=Math.round((Math.random()-0.5)*20);
+        }
+    }else{
+        randomSymetric(n);
+        for (var i=0;i<n;i++){
+            for (var j=0;j<n;j++){
+                document.getElementById(i+","+j).value=m[i][j];
+            }
+            document.getElementById("b"+i).value=b[i];
+        }
     }
-    var inputsb=document.getElementsByClassName("matb");
-    for (i=0;i<inputsb.length;i++){
-        inputsb[i].value=Math.round((Math.random()-0.5)*20);
-    }
+    
 }
 
 
@@ -338,6 +387,16 @@ resoudre.onclick=function(){
         
         break;
         case "cholesky":
+        solutionCholesky();
+        if (pasdesolution){
+            window.alert("Pas de solution.");
+        }else{
+            var s="";
+            for (i=0;i<x.length;i++){
+                s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
+            }
+            document.getElementById("x").innerHTML=s;
+        }
         break;
     }
 
@@ -353,6 +412,29 @@ function solutionIterative(){
         }
         if (m[i][i]!=0){
             x[i]/=m[i][i];
+        }else{
+            pasdesolution=true;
+        }
+        
+    }
+}
+
+function solutionCholesky(){
+    pasdesolution=false;
+    for (var i=0;i<n;i++){
+        y[i]=b[i];
+        for (var j=0;j<i;j++){
+            y[i]-=matlchol[i][j]*y[j];
+        }
+    }
+
+    for (var i=n-1;i>=0;i--){
+        x[i]=y[i];
+        for (var j=i+1;j<n;j++){
+            x[i]-=matlchol[j][i]*x[j];
+        }
+        if (matlchol[i][i]!=0){
+            x[i]/=matlchol[i][i];
         }else{
             pasdesolution=true;
         }
@@ -530,6 +612,9 @@ for (di=0;di<n;++di){
         inverser.disabled=false;
     }
 }
+
+
+
 
 // NOPE ON VA FAIRE CA PAR GAUSS JORDAN
 /*
@@ -730,7 +815,6 @@ document.getElementById("comparaison").onclick=function(){
             }
             b[i]=Math.round(Math.random()*3);
         }
-        console.log(r);
         for (var i=0;i<nb;i++){
             for (var j=0;j<nb;j++){
                 m[i][j]=0;
