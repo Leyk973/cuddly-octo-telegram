@@ -550,12 +550,15 @@ document.getElementById("comparaison").onclick=function(){
     
         var size=100;
         temps=new Array(size);
-    
+        var labels=new Array(size);
     
     
         for (var i=1;i<=size;i++){
+
             start=new Date();
+
             n=i*10;
+            labels[i-1]=String(n);
             m=new Array(n);
             for (var j=0;j<n;j++){
                 m[j]=new Array(n);
@@ -578,12 +581,29 @@ document.getElementById("comparaison").onclick=function(){
             transfoLU();
             solutionIterativeY();
             solutionIterativeX();
-            console.log(m);
+
             end=new Date();
             temps[i-1]=(end.getTime()-start.getTime());
         }
-    
+        console.log(labels);
         console.log(temps);
+        var ctx = document.getElementById("myChart").getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            
+            data: {
+                labels: labels,
+                datasets:[{
+                    data:temps,
+                    label: "LU",
+                    borderColor: 'red'
+                }]  
+            },
+            options: {
+                responsive:false
+            }
+        });
+        
     
     }
     
@@ -596,3 +616,5 @@ document.getElementById("comparaison").onclick=function(){
             b[i]=Math.round(Math.random()*20);
         }
     }
+
+    
