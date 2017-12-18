@@ -29,7 +29,7 @@ var temps;
 var start, end;
 var matlchol;// matrice L de Cholesky
 
-
+document.getElementById("gauss").checked=true;
 
 for (i=0;i<radios.length;i++){
     radios[i].onclick=function(event){
@@ -312,20 +312,30 @@ resoudre.onclick=function(){
     switch(methode){
         case "gauss":
         solutionIterative();
-        var s="";
-        for (i=0;i<x.length;i++){
-            s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
+        if (pasdesolution){
+            window.alert("Pas de solution.");
+        }else{
+            var s="";
+            for (i=0;i<x.length;i++){
+                s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
+            }
+            document.getElementById("x").innerHTML=s;
         }
-        document.getElementById("x").innerHTML=s;
+        
         break;
         case "lu":
         solutionIterativeY();
         solutionIterativeX();
-        var s="";
-        for (i=0;i<x.length;i++){
-            s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
+        if (pasdesolution){
+            window.alert("Pas de solution.");
+        }else{
+            var s="";
+            for (i=0;i<x.length;i++){
+                s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
+            }
+            document.getElementById("x").innerHTML=s;
         }
-        document.getElementById("x").innerHTML=s;
+        
         break;
         case "cholesky":
         break;
@@ -333,18 +343,26 @@ resoudre.onclick=function(){
 
 }
 
+var pasdesolution;
 function solutionIterative(){
+    pasdesolution=false;
     for (var i=n-1;i>=0;i--){
         x[i]=b[i];
         for (var j=i+1;j<n;j++){
             x[i]-=m[i][j]*x[j];
         }
-        x[i]/=m[i][i];
+        if (m[i][i]!=0){
+            x[i]/=m[i][i];
+        }else{
+            pasdesolution=true;
+        }
+        
     }
 }
 
 
 function solutionIterativeY(){
+    pasdesolution=false;
     for (var i=0;i<n;i++){
         y[i]=b[i];
         for (var j=0;j<i;j++){
@@ -354,12 +372,18 @@ function solutionIterativeY(){
 }
 
 function solutionIterativeX(){
+    pasdesolution=false;
     for (var i=n-1;i>=0;i--){
         x[i]=y[i];
         for (var j=i+1;j<n;j++){
             x[i]-=upper[i][j]*x[j];
         }
-        x[i]/=upper[i][i];
+        if (upper[i][i]!=0){
+            x[i]/=upper[i][i];
+        }else{
+            pasdesolution=true;
+        }
+        
     }
 }
 
@@ -501,7 +525,7 @@ for (di=0;di<n;++di){
         console.log("matini("+di+","+dj+")="+matini[di][dj]);
     }
 }*/
-    console.log("determinant de A : " + detrmnt);
+    window.alert("determinant de A : " + detrmnt);
     if ((detrmnt != 0) && (detrmnt != null)){
         inverser.disabled=false;
     }
@@ -640,8 +664,8 @@ document.getElementById("comparaison").onclick=function(){
         var size=100;
         temps=new Array(size);
         var labels=new Array(size);
-    
-    
+
+  
         for (var i=1;i<=size;i++){
 
             start=new Date();
@@ -715,7 +739,6 @@ document.getElementById("comparaison").onclick=function(){
                 }
             }
         }
-        console.log(m);
     }
 
     
