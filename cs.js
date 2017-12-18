@@ -28,7 +28,7 @@ var matini; // matrice initiale (pour calcul determinant/inverse)
 var temps;
 var start, end;
 
-
+document.getElementById("gauss").checked=true;
 
 for (i=0;i<radios.length;i++){
     radios[i].onclick=function(event){
