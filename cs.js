@@ -253,24 +253,30 @@ echelon.onclick=function(){
                 }
                 str+="</tr>";
             }
-            document.getElementById("matl").innerHTML=str;
-
-            str="";
-            for (i=0;i<n;i++){
-                str+="<tr>";
-                for (j=0;j<n;j++){
-                    str+="<td><label>"+String(matlchol[j][i]).substring(0,6)+"</label></td>";
-                    
-                }
-                str+="</tr>";
-            }
-            document.getElementById("matu").innerHTML=str;
-    
-            
-        }else{
-            window.alert("La matrice n'est pas symétrique et définie positive.");
         }
-        
+
+        //algo d'André-Louis
+        matlchol[0][0] = Math.sqrt(mat[0][0]);
+        for (cj=1; cj<n; cj++){
+            matlchol[cj][0] = mat[cj][0] / matlchol[0][0];
+        }
+        for (ci=1; ci<n-1; ci++){
+            somme = 0;
+            for (ck=0; ck<ci-1; ck++){
+                somme += Math.pow(matlchol[ci][ck],2);
+            }
+            matlchol[ci][ci] = Math.sqrt(mat[ci][ci] - somme);
+            for (cj=ci+1; cj<n; cj++){
+                somme=0;
+                for (ck=0; ck<(ci-1); ck++){
+                    somme+=(matlchol[cj][ck] * matlchol[ci][ck]);
+                }
+                matlchol[cj][ci]= (mat[cj][ci] - somme) / matlchol[ci][ci];
+            }
+        }
+        matlchol[n-1][n-1] = Math.sqrt(mat[n-1][n-1] - somme);
+
+
         break;
 
         
@@ -351,24 +357,13 @@ function factoCholesky(){
 
 
 random.onclick=function(){
-    if (methode!="cholesky"){
-        for (i=0;i<inputs.length;i++){
-            inputs[i].value=Math.round((Math.random()-0.5)*20);
-        }
-        var inputsb=document.getElementsByClassName("matb");
-        for (i=0;i<inputsb.length;i++){
-            inputsb[i].value=Math.round((Math.random()-0.5)*20);
-        }
-    }else{
-        randomSymetric(n);
-        for (var i=0;i<n;i++){
-            for (var j=0;j<n;j++){
-                document.getElementById(i+","+j).value=m[i][j];
-            }
-            document.getElementById("b"+i).value=b[i];
-        }
+    for (i=0;i<inputs.length;i++){
+        inputs[i].value=Math.round((Math.random()-0.5)*20);
     }
-    
+    var inputsb=document.getElementsByClassName("matb");
+    for (i=0;i<inputsb.length;i++){
+        inputsb[i].value=Math.round((Math.random()-0.5)*20);
+    }
 }
 
 
@@ -403,16 +398,6 @@ resoudre.onclick=function(){
         
         break;
         case "cholesky":
-        solutionCholesky();
-        if (pasdesolution){
-            window.alert("Pas de solution.");
-        }else{
-            var s="";
-            for (i=0;i<x.length;i++){
-                s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
-            }
-            document.getElementById("x").innerHTML=s;
-        }
         break;
     }
 
@@ -428,29 +413,6 @@ function solutionIterative(){
         }
         if (m[i][i]!=0){
             x[i]/=m[i][i];
-        }else{
-            pasdesolution=true;
-        }
-        
-    }
-}
-
-function solutionCholesky(){
-    pasdesolution=false;
-    for (var i=0;i<n;i++){
-        y[i]=b[i];
-        for (var j=0;j<i;j++){
-            y[i]-=matlchol[i][j]*y[j];
-        }
-    }
-
-    for (var i=n-1;i>=0;i--){
-        x[i]=y[i];
-        for (var j=i+1;j<n;j++){
-            x[i]-=matlchol[j][i]*x[j];
-        }
-        if (matlchol[i][i]!=0){
-            x[i]/=matlchol[i][i];
         }else{
             pasdesolution=true;
         }
@@ -569,10 +531,6 @@ function calcDetByLU(matP,nP){
             matu[i][j]=matP[i][j];
         }
     }
-    //var u = matu;
-
-    //var u = matP;
-
     // Construction de L et U
     for (k = 0; k < nP; ++k){
         p = matu[k][k];
@@ -587,8 +545,10 @@ function calcDetByLU(matP,nP){
 
     // Calcul du déterminant
     for (i = 0 ; i < nP; ++i){
+        console.log("boucle : "+i+"  "+matu[i][i]);
         det *= matu[i][i];
     }
+    console.log("debug fin cdblu : "+detrmnt);
 
     i= iniI;
     j= iniJ;
@@ -606,91 +566,13 @@ determiner.onclick=function(){
         }
     }
     detrmnt = calcDetByLU(matini,n);
+    console.log(detrmnt);
+    detrmnt = Math.round(detrmnt*10000)/10000;
     window.alert("determinant de A : " + detrmnt);
     if ((detrmnt != 0) && (detrmnt != null)){
         inverser.disabled=false;
     }
 }
-
-
-
-
-// NOPE ON VA FAIRE CA PAR GAUSS JORDAN
-/*
-//ne pas oublier la puissance de -1
-inverser.onclick=function(){
-    if ((detrmnt == 0)  || (isNaN(detrmnt))){
-        console.log("determinant de A nul : matrice non inversible");
-    } else if (detrmnt == null){
-        console.log("veuillez d'abord calculer le determinant");
-    } else {
-        console.log("calcul de l'inverse");
-        // initialisation de la matrice adjointe
-        var matAdj;
-        matAdj=new Array(n);
-        for (i=0;i<n;i++){
-            matAdj[i]=new Array(n)
-        }
-        // calcul des coefficients de adj
-        var sousMat;
-        sousMat=new Array(n-1);
-        for (i=0;i<n-1;i++){
-            sousMat[i]=new Array(n-1)
-        }
-
-//debug afficahge matini
-for (di=0;di<n;++di){
-    for (dj=0;dj<n;++dj){
-        console.log("matini("+di+","+dj+")="+matini[di][dj]);
-    }
-}
-
-        var cofi, cofj;
-
-        for (i=0;i<n;i++){
-            console.log("dansI---"+i+" n vaut ---" + n);
-            for (j=0;j<n;++j){
-                console.log("dansJ---"+i+"/"+j+"---");
-                //sous matrice
-                cofi=0;
-                for (inti=0;inti<n;++inti){
-                    if (inti != i){ // ligne a prendre en compte pour le calcul du cofacteur
-                        cofj=0;
-                        for (intj=0;intj<n;++intj){
-                            if(intj != j){ // colonne a prendre en compte pour le calcul du cofacteur
-                                sousMat[cofi][cofj]=matini[inti][intj];
-                                ++cofj;
-                            }
-                        }
-                        ++cofi;
-                    }                    
-                }
-                
-                console.log("---"+i+"/"+j+"---");
-                //debug afficahge sousmat
-                for (di=0;di<n-1;++di){
-                    for (dj=0;dj<n-1;++dj){
-                        console.log("sousmat["+i+j+"]("+di+","+dj+")="+sousMat[di][dj]);
-                    }
-                }
-
-
-                // deter sous mat
-                matAdj[i][j] = Math.pow(-1,i+j);
-                matAdj[i][j] *= calcDetByLU(sousMat,n-1);
-                console.log("matAdj("+i+","+j+") = "+matAdj[i][j]);
-            }
-            console.log("FIN I ---"+i+" n vaut ---" + n);
-            console.log("FIN I2 ---"+i+" n vaut ---" + n);
-        }
-
-        // passage a la transposée
-        // matInv <- tr(adj)
-        // matInv *= 1/det
-    }
-
-}
-*/
 
 inverser.onclick = function () {
     
@@ -723,6 +605,9 @@ inverser.onclick = function () {
                         m[l][i] = lignetemporaire[i];
                     }
                 }
+
+                // normalisation
+
 
 
                 for (i = l + 1; i < n; i++) {
@@ -854,6 +739,7 @@ document.getElementById("comparaison").onclick=function(){
             }
             b[i]=Math.round(Math.random()*3);
         }
+        console.log(r);
         for (var i=0;i<nb;i++){
             for (var j=0;j<nb;j++){
                 m[i][j]=0;
