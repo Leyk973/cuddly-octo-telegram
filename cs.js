@@ -265,7 +265,7 @@ echelon.onclick=function(){
             }
             str+="</tr>";
         }
-    }
+    
     document.getElementById("matu").innerHTML=str;
 
         break;
