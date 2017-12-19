@@ -571,7 +571,7 @@ function isSymetric(matC){
 function calcDet(matP,nP){
     var ma, deter=1,piv=-1, temp,aij,ajj;
     ma = new Array(nP);
-    console.log("merdumus : "+deter+"   "+matP[0][0]+"   "+matP[n-1][n-1]);
+    //console.log("merdumus : "+deter+"   "+matP[0][0]+"   "+matP[n-1][n-1]);
     
     for (var i=0;i<nP;i++){
         ma[i]=new Array(nP);
@@ -582,7 +582,7 @@ function calcDet(matP,nP){
         }
     }
 
-    console.log("merdum : "+deter+"   "+ma[0][0]+"   "+ma[n-1][n-1]);
+    //console.log("merdum : "+deter+"   "+ma[0][0]+"   "+ma[n-1][n-1]);
 
     var detnul = false;
     for (var j = 0; j < n - 1; ++j) {
@@ -629,7 +629,7 @@ function calcDet(matP,nP){
     } else {
         deter *= ma[n-1][n-1];
     }
-    console.log("merde: "+deter+"   "+ma[0][0]+"   "+ma[n-1][n-1]);
+    //console.log("merde: "+deter+"   "+ma[0][0]+"   "+ma[n-1][n-1]);
     return (deter);
 }
 
