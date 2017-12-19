@@ -57,7 +57,7 @@ ok.onclick=function(){
     if (ordre.value!=null){
         random.disabled=false;
         echelon.disabled=false;
-        determiner.disabled=false;
+        
         n=Math.round(ordre.value);
         m=new Array(n);
         for (i=0;i<n;i++){
@@ -186,7 +186,7 @@ echelon.onclick=function(){
         document.getElementById("ixe2").style.visibility="visible";
         document.getElementById("ixe2").style.position="relative";
 
-
+        determiner.disabled=false;
         
 
         transfoLU();
@@ -386,6 +386,14 @@ random.onclick=function(){
 }
 
 
+function déterminerledéterminant(){
+    var res=1;
+    for (var i=0;i<n;i++){
+        res*=upper[i][i];
+    }
+    return res;
+}
+
 
 resoudre.onclick=function(){
     switch(methode){
@@ -520,6 +528,7 @@ function transfoLU(){
     }
     // Initialisation
     // U = A
+    
     for (i=0;i<n;i++){
         for (j=0;j<n;j++){
             upper[i][j]=m[i][j];
@@ -701,7 +710,7 @@ determiner.onclick=function(){
     } else {
         window.alert("Le déterminant doit être calculé dans LU");
     }*/
-    var mamat;
+    /*var mamat;
     mamat = new Array(n);
     for (var i = 0; i < n; ++i){
         mamat[i] = new Array(n);
@@ -714,8 +723,8 @@ determiner.onclick=function(){
     }
 
     detrmnt=calcDet(mamat,n);
-    detrmnt = Math.round(detrmnt*10000)/10000;
-    window.alert("determinant de A : " + detrmnt);
+    detrmnt = Math.round(detrmnt*10000)/10000;*/
+    window.alert("determinant de A : " + déterminerledéterminant());
     if ((detrmnt != 0) && (detrmnt != null)){
         inverser.disabled=false;
     }
