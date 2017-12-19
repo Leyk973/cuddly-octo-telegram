@@ -25,7 +25,6 @@ var inverser=document.getElementById("calcInv");
 var matInv; // matrice inverse de A
 var detrmnt; // determinant de A
 var matini; // matrice initiale (pour calcul determinant/inverse)
-var temps,temps2;
 var start, end;
 var matlchol;// matrice L de Cholesky
 
@@ -103,7 +102,7 @@ var l=0,k=0;
 var start,end;
 
 echelon.onclick=function(){
-    start=new Date();
+    n=document.getElementById("ordre").value;
     for (i=0;i<n;i++){
         for (j=0;j<n;j++){
             m[i][j]=document.getElementById(i+","+j).value;
@@ -188,23 +187,15 @@ echelon.onclick=function(){
         document.getElementById("ixe2").style.position="relative";
 
 
-        //Initialisation des matrices l et u
-        lower=new Array(n);
-        for (i=0;i<n;i++){
-            lower[i]=new Array(n);
-        }
-        upper=new Array(n);
-        for (i=0;i<n;i++){
-            upper[i]=new Array(n);
-        }
+        
 
         transfoLU();
 
 
             var str="";
-            for (i=0;i<n;i++){
+            for (var i=0;i<n;i++){
                 str+="<tr>";
-                for (j=0;j<n;j++){
+                for (var j=0;j<n;j++){
                     str+="<td><label>"+String(lower[i][j]).substring(0,6)+"</label></td>";
                     
                 }
@@ -215,9 +206,9 @@ echelon.onclick=function(){
             document.getElementById("matl").innerHTML=str;
 
             str="";
-            for (i=0;i<n;i++){
+            for (var i=0;i<n;i++){
                 str+="<tr>";
-                for (j=0;j<n;j++){
+                for (var j=0;j<n;j++){
                     str+="<td><label>"+String(upper[i][j]).substring(0,6)+"</label></td>";
                     
                 }
@@ -292,23 +283,21 @@ echelon.onclick=function(){
 
     //Ici, on affiche les matrices après l'échelonnement/factorisation
     var strx="";
-    var str="";
+    var strr="";
     var strb="";
-    for (i=0;i<n;i++){
+    for (var i=0;i<n;i++){
         strx+="<tr><td><label>x"+(i+1)+"</label></td></tr>";
-        str+="<tr>";
+        strr+="<tr>";
         strb+="<tr><td><label id='mb"+i+"'>"+String(b[i]).substr(0,6)+"</label></td></tr>";
-        for (j=0;j<n;j++){
-            str+="<td><label id='a"+i+","+j+"'>"+String(m[i][j]).substr(0,6)+"</label></td>";
+        for (var j=0;j<n;j++){
+            strr+="<td><label id='a"+i+","+j+"'>"+String(m[i][j]).substr(0,6)+"</label></td>";
             
         }
-        str+="</tr>";
+        strr+="</tr>";
     }
 
-    end=new Date();
-    console.log(end.getTime() - start.getTime()+"ms");
 
-    document.getElementById("mata").innerHTML=str;
+    document.getElementById("mata").innerHTML=strr;
     document.getElementById("matb").innerHTML=strb;
     document.getElementById("ixe").innerHTML=strx;
     document.getElementById("ixe2").innerHTML=strx;
@@ -343,15 +332,9 @@ function delta(aij, res, i, j) {
 
 
 function factoCholesky(){
-    var mat, somme;
+    var somme;
     // récupération de la matrice initiale
-    mat=new Array(n);
-    for (var ci=0;ci<n;ci++){
-        mat[ci]=new Array(n);
-        for (var cj=0;cj<n;cj++){
-            mat[ci][cj]=m[ci][cj];
-        }
-    }
+    
     matlchol = new Array(n);
     for (var ci=0;ci<n;ci++){
         matlchol[ci] = new Array(n);
@@ -363,25 +346,25 @@ function factoCholesky(){
         }
     }
     //algo d'André-Louis
-    matlchol[0][0] = Math.sqrt(mat[0][0]);
+    matlchol[0][0] = Math.sqrt(m[0][0]);
     for (var cj=1; cj<n; cj++){
-        matlchol[cj][0] = mat[cj][0] / matlchol[0][0];
+        matlchol[cj][0] = m[cj][0] / matlchol[0][0];
     }
     for (var ci=1; ci<n-1; ci++){
         somme = 0;
         for (var ck=0; ck<ci-1; ck++){
             somme += matlchol[ci][ck] * matlchol[ci][ck];
         }
-        matlchol[ci][ci] = Math.sqrt(mat[ci][ci] - somme);
+        matlchol[ci][ci] = Math.sqrt(m[ci][ci] - somme);
         for (var cj=ci+1; cj<n; cj++){
             somme=0;
             for (var ck=0; ck<(ci-1); ck++){
                 somme+=(matlchol[cj][ck] * matlchol[ci][ck]);
             }
-            matlchol[cj][ci]= (mat[cj][ci] - somme) / matlchol[ci][ci];
+            matlchol[cj][ci]= (m[cj][ci] - somme) / matlchol[ci][ci];
         }
     }
-    matlchol[n-1][n-1] = Math.sqrt(mat[n-1][n-1] - somme);
+    matlchol[n-1][n-1] = Math.sqrt(m[n-1][n-1] - somme);
 }
 
 
@@ -417,7 +400,7 @@ resoudre.onclick=function(){
             window.alert("Pas de solution.");
         }else{
             var s="";
-            for (i=0;i<x.length;i++){
+            for (i=0;i<n;i++){
                 s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
             }
             document.getElementById("x").innerHTML=s;
@@ -431,7 +414,7 @@ resoudre.onclick=function(){
             window.alert("Pas de solution.");
         }else{
             var s="";
-            for (i=0;i<x.length;i++){
+            for (i=0;i<n;i++){
                 s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
             }
             document.getElementById("x").innerHTML=s;
@@ -444,7 +427,7 @@ resoudre.onclick=function(){
             window.alert("Pas de solution.");
         }else{
             var s="";
-            for (i=0;i<x.length;i++){
+            for (i=0;i<n;i++){
                 s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
             }
             document.getElementById("x").innerHTML=s;
@@ -532,6 +515,15 @@ function transfoLU(){
     var p; // pivot
     var q; // qivot
 
+    //Initialisation des matrices l et u
+    lower=new Array(n);
+    for (i=0;i<n;i++){
+        lower[i]=new Array(n);
+    }
+    upper=new Array(n);
+    for (i=0;i<n;i++){
+        upper[i]=new Array(n);
+    }
     // Initialisation
     // U = A
     for (i=0;i<n;i++){
@@ -714,9 +706,16 @@ inverser.onclick = function () {
 document.getElementById("comparaison").onclick=function(){
     
         var size=document.getElementById("size").value;
-        temps=new Array(size);
-        temps2=new Array(size);
+        var temps=new Array(size);
+        var temps2=new Array(size);
         var labels=new Array(size);
+        m=new Array(size*10);
+        for (var j=0;j<size*10;j++){
+            m[j]=new Array(size*10);
+        }
+        b=new Array(size*10);
+        x=new Array(size*10);
+        y=new Array(size*10);
   
         for (var i=1;i<=size;i++){
 
@@ -724,22 +723,9 @@ document.getElementById("comparaison").onclick=function(){
 
             n=i*10;
             labels[i-1]=String(n);
-            m=new Array(n);
-            for (var j=0;j<n;j++){
-                m[j]=new Array(n);
-            }
-            b=new Array(n);
-            x=new Array(n);
-            y=new Array(n);
+            
     
-            lower=new Array(n);
-            for (var j=0;j<n;j++){
-                lower[j]=new Array(n);
-            }
-            upper=new Array(n);
-            for (var j=0;j<n;j++){
-                upper[j]=new Array(n);
-            }
+            
     
             randomSymetric(n);
     
@@ -755,22 +741,9 @@ document.getElementById("comparaison").onclick=function(){
             start=new Date();
 
             n=i*10;
-            m=new Array(n);
-            for (var j=0;j<n;j++){
-                m[j]=new Array(n);
-            }
-            b=new Array(n);
-            x=new Array(n);
-            y=new Array(n);
+           
     
-            lower=new Array(n);
-            for (var j=0;j<n;j++){
-                lower[j]=new Array(n);
-            }
-            upper=new Array(n);
-            for (var j=0;j<n;j++){
-                upper[j]=new Array(n);
-            }
+            
     
             randomSymetric(n);
     
@@ -801,7 +774,6 @@ document.getElementById("comparaison").onclick=function(){
             }
         });
         
-    
     }
     
     function randomSymetric(nb){
@@ -816,7 +788,6 @@ document.getElementById("comparaison").onclick=function(){
             }
             b[i]=Math.round(Math.random()*3);
         }
-        console.log(r);
         for (var i=0;i<nb;i++){
             for (var j=0;j<nb;j++){
                 m[i][j]=0;
