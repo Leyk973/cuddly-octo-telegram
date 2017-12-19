@@ -398,10 +398,42 @@ resoudre.onclick=function(){
         
         break;
         case "cholesky":
+        solutionCholesky();
+        if (pasdesolution){
+            window.alert("Pas de solution.");
+        }else{
+            var s="";
+            for (i=0;i<x.length;i++){
+                s+="<tr><td>x"+(i+1)+" = </td><td>"+x[i]+"</td></tr>"
+            }
+            document.getElementById("x").innerHTML=s;
+        }
         break;
     }
 
 }
+function solutionCholesky(){
+    pasdesolution=false;
+    for (var i=0;i<n;i++){
+        y[i]=b[i];
+        for (var j=0;j<i;j++){
+            y[i]-=matlchol[i][j]*y[j];
+        }
+    }
+    for (var i=n-1;i>=0;i--){
+        x[i]=y[i];
+        for (var j=i+1;j<n;j++){
+            x[i]-=matlchol[j][i]*x[j];
+        }
+        if (matlchol[i][i]!=0){
+            x[i]/=matlchol[i][i];
+        }else{
+            pasdesolution=true;
+        }
+        
+    }
+}
+
 
 var pasdesolution;
 function solutionIterative(){
@@ -698,7 +730,6 @@ document.getElementById("comparaison").onclick=function(){
     
             factoCholesky();
             solutionCholesky();
-
             end=new Date();
             temps2[i-1]=(end.getTime()-start.getTime());
         }
