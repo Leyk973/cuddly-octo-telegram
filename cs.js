@@ -547,18 +547,33 @@ function transfoLU(){
     }
 
     // Construction de L et U
-    for (k = 0; k < n; ++k){
+    var pivNotFound = false;
+
+    for (k = 0; k < n; ++k) {
         p = upper[k][k];
-        for (i = k+1; i < n; ++i){
-            q = upper[i][k];
-            upper[i][k] = 0;
-            lower[i][k] = q/p;
-            for (j = k+1; j < n; ++j){
-                upper[i][j] = upper[i][j] - ( ( q/p ) * upper[k][j]);
+        /// SI P!=0
+        if (p != 0) {
+            for (i = k + 1; i < n; ++i) {
+                q = upper[i][k];
+                upper[i][k] = 0;
+                lower[i][k] = q / p;
+                for (j = k + 1; j < n; ++j) {
+                    upper[i][j] = upper[i][j] - ((q / p) * upper[k][j]);
+                }
             }
+        } else {
+            // recherche d'un pivot positif
+            pivNotFound = true;
+            for (var r = k+1; r < n; ++r){
+                if (upper[r][k] != 0){
+                    pivNotFound=false;
+                    
+                }
+            }
+
+            /// SI P = 0 : permutation dans L, U et b
         }
-    }
-}
+}}
 
 // retourne vrai si la matrice en paramètre est symétrique, faux sinon
 // param : matQ : matrice carrée
@@ -721,23 +736,31 @@ determiner.onclick=function(){
             mamat[i][j]=document.getElementById(i+","+j).value;
         }
     }
-
+    
     detrmnt=calcDet(mamat,n);
     detrmnt = Math.round(detrmnt*10000)/10000;*/
-    window.alert("determinant de A : " + déterminerledéterminant());
+    detrmnt=déterminerledéterminant()
+    window.alert("determinant de A : " + detrmnt);
     if ((detrmnt != 0) && (detrmnt != null)){
         inverser.disabled=false;
     }
 }
-
+var facteurs;
 inverser.onclick = function () {
-    
-    if ((detrmnt == 0) || (isNaN(detrmnt))) {
-        console.log("determinant de A nul : matrice non inversible");
-    } else if (detrmnt == null) {
-        console.log("veuillez d'abord calculer le determinant");
+    facteurs=new Array(n);
+    for (var i=0;i<n;i++){
+        facteurs[i]=new Array(n);
+        for (var j=0;j<n;j++){
+            facteurs[i][j]=0;
+        }
+    }
+    if (detrmnt == 0) {
+        window.alert("determinant de A nul : matrice non inversible");
+    } else if ((detrmnt == null) || (isNaN(detrmnt))) {
+        window.alert("veuillez d'abord calculer le determinant");
     } else {
-        var l=0, k=0;
+        window.alert("La matrice est inversible. Déterminant : "+detrmnt);
+        /*var l=0, k=0;
         while (l < ordre.value && k < ordre.value) {
             profil = [];
             var lig = l;
@@ -775,13 +798,15 @@ inverser.onclick = function () {
                     }
                     b[i] -= facteur * b[l];
                 }
+                facteurs[l].push(facteur);
+                
 
                 l++;
 
 
             }
             k++;
-        }
+        }*/
     }
 
 }
