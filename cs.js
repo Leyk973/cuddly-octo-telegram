@@ -348,13 +348,24 @@ function factoCholesky(){
 
 
 random.onclick=function(){
-    for (i=0;i<inputs.length;i++){
-        inputs[i].value=Math.round((Math.random()-0.5)*20);
+    if (methode!="cholesky"){
+        for (i=0;i<inputs.length;i++){
+            inputs[i].value=Math.round((Math.random()-0.5)*20);
+        }
+        var inputsb=document.getElementsByClassName("matb");
+        for (i=0;i<inputsb.length;i++){
+            inputsb[i].value=Math.round((Math.random()-0.5)*20);
+        }
+    }else{
+        randomSymetric(n);
+        for (var i=0;i<n;i++){
+            for (var j=0;j<n;j++){
+                document.getElementById(i+","+j).value=m[i][j];
+            }
+            document.getElementById("b"+i).value=b[i];
+        }
     }
-    var inputsb=document.getElementsByClassName("matb");
-    for (i=0;i<inputsb.length;i++){
-        inputsb[i].value=Math.round((Math.random()-0.5)*20);
-    }
+    
 }
 
 
