@@ -226,53 +226,64 @@ echelon.onclick=function(){
             document.getElementById("matu").innerHTML=str;
         break;
         
-        case "cholesky" :
-        if (isSymetric(m)){
-        document.getElementById("matl").style.position="relative";
-        document.getElementById("matu").style.position="relative";
-        document.getElementById("matl").style.visibility="visible";
-        document.getElementById("matu").style.visibility="visible";
+        case "cholesky":
+            if (isSymetric(m)) {
+                document.getElementById("matl").style.position = "relative";
+                document.getElementById("matu").style.position = "relative";
+                document.getElementById("matl").style.visibility = "visible";
+                document.getElementById("matu").style.visibility = "visible";
 
-        document.getElementById("egal2").style.position="relative";
-        document.getElementById("egal2").style.visibility="visible";
-        document.getElementById("ixe2").style.visibility="visible";
-        document.getElementById("ixe2").style.position="relative";
-        
-        
-            
+                document.getElementById("egal2").style.position = "relative";
+                document.getElementById("egal2").style.visibility = "visible";
+                document.getElementById("ixe2").style.visibility = "visible";
+                document.getElementById("ixe2").style.position = "relative";
 
-        factoCholesky();
 
-        
-            str="";
-            for (i=0;i<n;i++){
-                str+="<tr>";
-                for (j=0;j<n;j++){
-                    str+="<td><label>"+String(matlchol[i][j]).substring(0,6)+"</label></td>";
-                    
-                }
-                str+="</tr>";
-            }
-        }
 
-        document.getElementById("matl").innerHTML=str;
-        str="";
-        for (i=0;i<n;i++){
-            str+="<tr>";
-            for (j=0;j<n;j++){
-                str+="<td><label>"+String(matlchol[j][i]).substring(0,6)+"</label></td>";
+
+                //factoCholesky();
                 
+                matlchol = ghcholesky(m);
+                for (var hi = 0; hi<n; ++hi){
+                    for (var hj = 0; hj<n; ++hj){
+                        if(!(matlchol[hi][hj])){
+                            matlchol[hi][hj]=0;
+                        }
+                    }
+                }
+
+
+
+
+                str = "";
+                for (i = 0; i < n; i++) {
+                    str += "<tr>";
+                    for (j = 0; j < n; j++) {
+                        str += "<td><label>" + String(matlchol[i][j]).substring(0, 6) + "</label></td>";
+
+                    }
+                    str += "</tr>";
+                }
             }
-            str+="</tr>";
-        }
-    
-    document.getElementById("matu").innerHTML=str;
 
-        break;
+            document.getElementById("matl").innerHTML = str;
+            str = "";
+            for (i = 0; i < n; i++) {
+                str += "<tr>";
+                for (j = 0; j < n; j++) {
+                    str += "<td><label>" + String(matlchol[j][i]).substring(0, 6) + "</label></td>";
 
-        
+                }
+                str += "</tr>";
+            }
+
+            document.getElementById("matu").innerHTML = str;
+
+            break;
+
+
     }
-    
+
 
     
 
@@ -303,40 +314,65 @@ echelon.onclick=function(){
     
 }
 
+function ghcholesky(matrix) {
+	var len = matrix.length, res = Array(len);
+	if (matrix.length !== matrix[len-1].length) throw Error('Input matrix must be square or lower triangle');
+	res[0] = [Math.sqrt( matrix[0][0] )];
+	for (var i = 1; i<len; ++i) {
+		res[i] = Array(i+1); // lower triangle
+		for (var j = 0; j < i; ++j) {
+			res[i][j] = delta(matrix[i][j], res, i, j) / res[j][j];
+		}
+		res[i][i] = Math.sqrt(delta(matrix[i][i], res, i, i));
+	}
+	return res;
+}
+
+function delta(aij, res, i, j) {
+	for (var k=0, sum=aij; k<j; ++k) if (res[i][k]) sum -= res[i][k] * res[j][k];
+	return sum;
+}
+
+
+
+
+
+
+
 function factoCholesky(){
-    var mat, ci, cj, ck, somme;
+    var mat, somme;
     // récupération de la matrice initiale
     mat=new Array(n);
-    for (ci=0;ci<n;ci++){
+    for (var ci=0;ci<n;ci++){
         mat[ci]=new Array(n);
-        for (cj=0;cj<n;cj++){
+        for (var cj=0;cj<n;cj++){
             mat[ci][cj]=m[ci][cj];
         }
     }
     matlchol = new Array(n);
-    for (ci=0;ci<n;ci++){
+    for (var ci=0;ci<n;ci++){
         matlchol[ci] = new Array(n);
     }
 
-    for (ci=0; ci<n; ci++){
-        for(cj=0; cj<n; cj++){
+    for (var ci=0; ci<n; ci++){
+        for(var cj=0; cj<n; cj++){
             matlchol[ci][cj]=0;
         }
     }
     //algo d'André-Louis
     matlchol[0][0] = Math.sqrt(mat[0][0]);
-    for (cj=1; cj<n; cj++){
+    for (var cj=1; cj<n; cj++){
         matlchol[cj][0] = mat[cj][0] / matlchol[0][0];
     }
-    for (ci=1; ci<n-1; ci++){
+    for (var ci=1; ci<n-1; ci++){
         somme = 0;
-        for (ck=0; ck<ci-1; ck++){
-            somme += Math.pow(matlchol[ci][ck],2);
+        for (var ck=0; ck<ci-1; ck++){
+            somme += matlchol[ci][ck] * matlchol[ci][ck];
         }
         matlchol[ci][ci] = Math.sqrt(mat[ci][ci] - somme);
-        for (cj=ci+1; cj<n; cj++){
+        for (var cj=ci+1; cj<n; cj++){
             somme=0;
-            for (ck=0; ck<(ci-1); ck++){
+            for (var ck=0; ck<(ci-1); ck++){
                 somme+=(matlchol[cj][ck] * matlchol[ci][ck]);
             }
             matlchol[cj][ci]= (mat[cj][ci] - somme) / matlchol[ci][ci];
