@@ -196,8 +196,7 @@ echelon.onclick=function(){
             for (var i=0;i<n;i++){
                 str+="<tr>";
                 for (var j=0;j<n;j++){
-                    str+="<td><label>"+String(lower[i][j]).substring(0,6)+"</label></td>";
-                    
+                    str+="<td><label>"+String(lower[i][j]).substring(0,6)+"</label></td>";                    
                 }
                 str+="</tr>";
             }
@@ -209,8 +208,7 @@ echelon.onclick=function(){
             for (var i=0;i<n;i++){
                 str+="<tr>";
                 for (var j=0;j<n;j++){
-                    str+="<td><label>"+String(upper[i][j]).substring(0,6)+"</label></td>";
-                    
+                    str+="<td><label>"+String(upper[i][j]).substring(0,6)+"</label></td>";                    
                 }
                 str+="</tr>";
             }
@@ -512,36 +510,36 @@ function solutionIterativeX(){
 }
 
 // décompose la matrice matP en lower et upper
-function transfoLU(){
+function transfoLU() {
     // variables locales
     var p; // pivot
     var q; // qivot
 
     //Initialisation des matrices l et u
-    lower=new Array(n);
-    for (i=0;i<n;i++){
-        lower[i]=new Array(n);
+    lower = new Array(n);
+    for (i = 0; i < n; i++) {
+        lower[i] = new Array(n);
     }
-    upper=new Array(n);
-    for (i=0;i<n;i++){
-        upper[i]=new Array(n);
+    upper = new Array(n);
+    for (i = 0; i < n; i++) {
+        upper[i] = new Array(n);
     }
     // Initialisation
     // U = A
-    
-    for (i=0;i<n;i++){
-        for (j=0;j<n;j++){
-            upper[i][j]=m[i][j];
+
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            upper[i][j] = m[i][j];
         }
     }
 
     // L = I
-    for (i = 0; i < n; ++i){
-        for (j = 0; j < n; ++j){
-            if (j != i){
-                lower[i][j]=0;
+    for (i = 0; i < n; ++i) {
+        for (j = 0; j < n; ++j) {
+            if (j != i) {
+                lower[i][j] = 0;
             } else {
-                lower[i][j]=1;
+                lower[i][j] = 1;
             }
         }
     }
@@ -561,19 +559,40 @@ function transfoLU(){
                     upper[i][j] = upper[i][j] - ((q / p) * upper[k][j]);
                 }
             }
-        } else {
+        } else { /// SI P = 0 : permutation dans L, U et b puis operations
             // recherche d'un pivot positif
             pivNotFound = true;
-            for (var r = k+1; r < n; ++r){
-                if (upper[r][k] != 0){
-                    pivNotFound=false;
-                    
+            for (var r = k + 1; r < n; ++r) {
+                if (pivNotFound) {
+                    if (upper[r][k] != 0) {
+                        pivNotFound = false;
+                        // permutation dans L, U et b
+                        var tempL, tempU, tempb;
+                        tempb = b[k]; b[k] = b[r]; b[r] = tempb;
+                        for (var y = 0; y < k; ++y) {
+                            tempL = lower[k][y];
+                            lower[k][y] = lower[r][y];
+                            lower[r][y] = tempL;
+                            tempU = upper[k][y];
+                            upper[k][y] = upper[r][y];
+                            upper[r][y] = tempU;
+                        }
+                        // operations
+                        p = upper[k][k];
+                        for (i = k + 1; i < n; ++i) {
+                            q = upper[i][k];
+                            upper[i][k] = 0;
+                            lower[i][k] = q / p;
+                            for (j = k + 1; j < n; ++j) {
+                                upper[i][j] = upper[i][j] - ((q / p) * upper[k][j]);
+                            }
+                        }
+                    }
                 }
             }
-
-            /// SI P = 0 : permutation dans L, U et b
         }
-}}
+    }
+}
 
 // retourne vrai si la matrice en paramètre est symétrique, faux sinon
 // param : matQ : matrice carrée
