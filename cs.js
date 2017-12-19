@@ -280,12 +280,7 @@ echelon.onclick=function(){
             document.getElementById("matu").innerHTML = str;
 
             break;
-
-
     }
-
-
-    
 
     //Ici, on affiche les matrices après l'échelonnement/factorisation
     var strx="";
@@ -522,7 +517,6 @@ function solutionIterativeX(){
     }
 }
 
-// a lancer ssi echelonnée
 // décompose la matrice matP en lower et upper
 function transfoLU(){
     // variables locales
@@ -579,6 +573,73 @@ function isSymetric(matC){
 }
 
 
+function calcDet(matP,nP){
+    var ma, deter=1,piv=-1, temp,aij,ajj;
+    ma = new Array(nP);
+    console.log("merdumus : "+deter+"   "+matP[0][0]+"   "+matP[n-1][n-1]);
+    
+    for (var i=0;i<nP;i++){
+        ma[i]=new Array(nP);
+    }
+    for (var i=0;i<nP;++i){
+        for (var j=0;j<nP;++j){
+            ma[i][j]=matP[i][j];
+        }
+    }
+
+    console.log("merdum : "+deter+"   "+ma[0][0]+"   "+ma[n-1][n-1]);
+
+    var detnul = false;
+    for (var j = 0; j < n - 1; ++j) {
+        if (!detnul) {
+            // si ajj = 0
+            if (ma[j][j] == 0) {
+                detnul = true;
+                for (var i = j + 1; i < n; ++i) {
+                    if (ma[i][j] != 0) {
+                        // recherche du pivot eventuel
+                        if (piv==-1){
+                            piv = i;
+                        }
+                        detnul = false;
+                    }
+                }
+                if (!detnul) {
+                    for (var k = 0; k<n; ++k){
+                        ma[piv][k] *= -1;
+                    }
+                    // permutation
+                    for (var i=0;i<n;i++){
+                        temp=ma[piv][i];
+                        ma[piv][i]=ma[j][i];
+                        ma[j][i]=temp;
+                    }
+                }
+            // si ajj != 0
+            } else {
+                for (var i = j+1; i < n;++i){
+                    // ajout a la ieme ligne
+                    ajj=ma[j][j];
+                    for (var k=0;k<n;k++){
+                        aij=ma[i][j];
+                        ma[i][k] -= (aij/ajj) * ma[j][k];
+                    }
+                    deter *= ma[j][j];
+                }
+            }
+        }
+    }
+    if (detnul){
+        deter = 0;
+    } else {
+        deter *= ma[n-1][n-1];
+    }
+    console.log("merde: "+deter+"   "+ma[0][0]+"   "+ma[n-1][n-1]);
+    return (deter);
+}
+
+
+/*
 // retourne le déterminant d'une matrice à partir de la U de sa décomposition LU
 // va être utile pour verifier si definie positive
 // param : matP : une matrice carree
@@ -629,19 +690,35 @@ function calcDetByLU(matP,nP){
     j= iniJ;
     return det;
 }
+*/
 
 determiner.onclick=function(){  
-    matini=new Array(n);
-    for (i=0;i<n;i++){
-        matini[i]=new Array(n)
+    /*if (upper) {
+        detrmnt=upper[0][0];
+        for (var c=1; c<n; ++c){
+            detrmnt*=upper[c][c];
+        }
+        detrmnt = Math.round(detrmnt*10000)/10000;
+        window.alert("determinant de A : " + detrmnt);
+        if ((detrmnt != 0) && (detrmnt != null)){
+            inverser.disabled=false;
+        }
+    } else {
+        window.alert("Le déterminant doit être calculé dans LU");
+    }*/
+    var mamat;
+    mamat = new Array(n);
+    for (var i = 0; i < n; ++i){
+        mamat[i] = new Array(n);
     }
-    for (i=0;i<n;i++){
-        for (j=0;j<n;j++){
-            matini[i][j]=document.getElementById(i+","+j).value;
+    
+    for (var i=0;i<n;i++){
+        for (var j=0;j<n;j++){
+            mamat[i][j]=document.getElementById(i+","+j).value;
         }
     }
-    detrmnt = calcDetByLU(matini,n);
-    console.log(detrmnt);
+
+    detrmnt=calcDet(mamat,n);
     detrmnt = Math.round(detrmnt*10000)/10000;
     window.alert("determinant de A : " + detrmnt);
     if ((detrmnt != 0) && (detrmnt != null)){
