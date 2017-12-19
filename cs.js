@@ -227,7 +227,7 @@ echelon.onclick=function(){
         break;
         
         case "cholesky" :
-        if (isSymetric(mat)){
+        if (isSymetric(m)){
         document.getElementById("matl").style.position="relative";
         document.getElementById("matu").style.position="relative";
         document.getElementById("matl").style.visibility="visible";
