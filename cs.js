@@ -457,6 +457,11 @@ function solutionCholesky(){
         for (var j=0;j<i;j++){
             y[i]-=matlchol[i][j]*y[j];
         }
+        if (matlchol[i][i]!=0){
+            y[i]/=matlchol[i][i];
+        }else{
+            pasdesolution=true;
+        }
     }
     for (var i=n-1;i>=0;i--){
         x[i]=y[i];
