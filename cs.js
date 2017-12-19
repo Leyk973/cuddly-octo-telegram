@@ -264,20 +264,23 @@ echelon.onclick=function(){
                     }
                     str += "</tr>";
                 }
-            }
-
-            document.getElementById("matl").innerHTML = str;
-            str = "";
-            for (i = 0; i < n; i++) {
-                str += "<tr>";
-                for (j = 0; j < n; j++) {
-                    str += "<td><label>" + String(matlchol[j][i]).substring(0, 6) + "</label></td>";
-
+                document.getElementById("matl").innerHTML = str;
+                str = "";
+                for (i = 0; i < n; i++) {
+                    str += "<tr>";
+                    for (j = 0; j < n; j++) {
+                        str += "<td><label>" + String(matlchol[j][i]).substring(0, 6) + "</label></td>";
+    
+                    }
+                    str += "</tr>";
                 }
-                str += "</tr>";
+    
+                document.getElementById("matu").innerHTML = str;
+            }else{
+                window.alert("La matrice n'est pas symétrique.");
             }
 
-            document.getElementById("matu").innerHTML = str;
+            
 
             break;
 
