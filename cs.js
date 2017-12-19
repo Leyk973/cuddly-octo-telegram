@@ -255,27 +255,18 @@ echelon.onclick=function(){
             }
         }
 
-        //algo d'André-Louis
-        matlchol[0][0] = Math.sqrt(mat[0][0]);
-        for (cj=1; cj<n; cj++){
-            matlchol[cj][0] = mat[cj][0] / matlchol[0][0];
-        }
-        for (ci=1; ci<n-1; ci++){
-            somme = 0;
-            for (ck=0; ck<ci-1; ck++){
-                somme += Math.pow(matlchol[ci][ck],2);
+        document.getElementById("matl").innerHTML=str;
+        str="";
+        for (i=0;i<n;i++){
+            str+="<tr>";
+            for (j=0;j<n;j++){
+                str+="<td><label>"+String(matlchol[j][i]).substring(0,6)+"</label></td>";
+                
             }
-            matlchol[ci][ci] = Math.sqrt(mat[ci][ci] - somme);
-            for (cj=ci+1; cj<n; cj++){
-                somme=0;
-                for (ck=0; ck<(ci-1); ck++){
-                    somme+=(matlchol[cj][ck] * matlchol[ci][ck]);
-                }
-                matlchol[cj][ci]= (mat[cj][ci] - somme) / matlchol[ci][ci];
-            }
+            str+="</tr>";
         }
-        matlchol[n-1][n-1] = Math.sqrt(mat[n-1][n-1] - somme);
-
+    }
+    document.getElementById("matu").innerHTML=str;
 
         break;
 
