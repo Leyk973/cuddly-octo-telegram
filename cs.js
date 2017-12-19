@@ -386,11 +386,17 @@ random.onclick=function(){
 
 function déterminerledéterminant(){
     var res=1;
-    for (var i=0;i<n;i++){
-        res*=upper[i][i];
+    if (upper){
+        for (var i=0;i<n;i++){
+            res*=upper[i][i];
+        }
+        return res;
+    } else {
+        window.alert("Faire décomposition LU");
     }
-    return res;
 }
+    
+    
 
 
 resoudre.onclick=function(){
@@ -517,25 +523,25 @@ function transfoLU() {
 
     //Initialisation des matrices l et u
     lower = new Array(n);
-    for (i = 0; i < n; i++) {
+    for (var i = 0; i < n; i++) {
         lower[i] = new Array(n);
     }
     upper = new Array(n);
-    for (i = 0; i < n; i++) {
+    for (var i = 0; i < n; i++) {
         upper[i] = new Array(n);
     }
     // Initialisation
     // U = A
 
-    for (i = 0; i < n; i++) {
-        for (j = 0; j < n; j++) {
+    for (var i = 0; i < n; i++) {
+        for (var j = 0; j < n; j++) {
             upper[i][j] = m[i][j];
         }
     }
 
     // L = I
-    for (i = 0; i < n; ++i) {
-        for (j = 0; j < n; ++j) {
+    for (var i = 0; i < n; ++i) {
+        for (var j = 0; j < n; ++j) {
             if (j != i) {
                 lower[i][j] = 0;
             } else {
@@ -547,15 +553,15 @@ function transfoLU() {
     // Construction de L et U
     var pivNotFound = false;
 
-    for (k = 0; k < n; ++k) {
+    for (var k = 0; k < n; ++k) {
         p = upper[k][k];
         /// SI P!=0
         if (p != 0) {
-            for (i = k + 1; i < n; ++i) {
+            for (var i = k + 1; i < n; ++i) {
                 q = upper[i][k];
                 upper[i][k] = 0;
                 lower[i][k] = q / p;
-                for (j = k + 1; j < n; ++j) {
+                for (var j = k + 1; j < n; ++j) {
                     upper[i][j] = upper[i][j] - ((q / p) * upper[k][j]);
                 }
             }
@@ -569,7 +575,7 @@ function transfoLU() {
                         // permutation dans L, U et b
                         var tempL, tempU, tempb;
                         tempb = b[k]; b[k] = b[r]; b[r] = tempb;
-                        for (var y = 0; y < k; ++y) {
+                        for (var y = 0; y < n; ++y) {
                             tempL = lower[k][y];
                             lower[k][y] = lower[r][y];
                             lower[r][y] = tempL;
@@ -579,16 +585,19 @@ function transfoLU() {
                         }
                         // operations
                         p = upper[k][k];
-                        for (i = k + 1; i < n; ++i) {
+                        for (var i = k + 1; i < n; ++i) {
                             q = upper[i][k];
                             upper[i][k] = 0;
                             lower[i][k] = q / p;
-                            for (j = k + 1; j < n; ++j) {
+                            for (var j = k + 1; j < n; ++j) {
                                 upper[i][j] = upper[i][j] - ((q / p) * upper[k][j]);
                             }
                         }
                     }
                 }
+            }
+            if (pivNotFound){
+                window.alert("pas de decomposition LU possible");
             }
         }
     }
@@ -764,6 +773,8 @@ determiner.onclick=function(){
         inverser.disabled=false;
     }
 }
+
+
 var facteurs;
 inverser.onclick = function () {
     facteurs=new Array(n);
